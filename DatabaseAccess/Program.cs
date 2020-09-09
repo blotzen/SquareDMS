@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DatabaseAccess
+﻿namespace DatabaseAccess
 {
-    class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {

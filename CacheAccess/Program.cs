@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CacheAccess
+﻿namespace CacheAccess
 {
-    class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {
