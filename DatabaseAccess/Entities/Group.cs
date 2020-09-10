@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a Group in the Square_DB
     /// </summary>
-    public class Group : IEntity
+    public class Group : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper

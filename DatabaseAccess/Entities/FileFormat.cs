@@ -1,6 +1,6 @@
 ﻿namespace SquareDMS.DatabaseAccess.Entities
 {
-    public class FileFormat : IEntity
+    public class FileFormat : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper
@@ -13,6 +13,9 @@
             Description = description;
         }
 
+        /// <summary>
+        /// Id of the entity
+        /// </summary>
         public int Id { get; private set; }
 
         /// <summary>

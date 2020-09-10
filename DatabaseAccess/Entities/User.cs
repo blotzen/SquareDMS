@@ -1,6 +1,6 @@
 ﻿namespace SquareDMS.DatabaseAccess.Entities
 {
-    public class User : IEntity
+    public class User : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper
@@ -33,6 +33,6 @@
 
         public byte[] PasswordHash { get; private set; }
 
-        public bool Active { get; private set; }
+        public bool? Active { get; private set; }
     }
 }

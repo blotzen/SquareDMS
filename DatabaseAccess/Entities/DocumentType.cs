@@ -1,6 +1,6 @@
 ﻿namespace SquareDMS.DatabaseAccess.Entities
 {
-    public class DocumentType : IEntity
+    public class DocumentType : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper

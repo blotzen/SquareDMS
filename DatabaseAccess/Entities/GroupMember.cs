@@ -3,7 +3,7 @@
     /// <summary>
     /// Users are members in groups. This entity links them.
     /// </summary>
-    public class GroupMember : IEntity
+    public class GroupMember : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper

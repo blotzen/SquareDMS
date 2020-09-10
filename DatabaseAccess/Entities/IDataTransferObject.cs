@@ -1,6 +1,6 @@
 ﻿namespace SquareDMS.DatabaseAccess.Entities
 {
-    public interface IEntity
+    public interface IDataTransferObject
     {
 
     }

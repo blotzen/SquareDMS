@@ -3,7 +3,7 @@
     /// <summary>
     /// The Right a Group has on a Document.
     /// </summary>
-    public class Right : IEntity
+    public class Right : IDataTransferObject
     {
         /// <summary>
         /// Constructor for dapper

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Core = SquareDMS.Core;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,6 +12,14 @@ namespace SquareDMS.RestEndpoint.Controllers
     [ApiController]
     public class FileFormatsController : ControllerBase
     {
+
+
+        // POST api/<ValuesController>
+        [HttpPost]
+        public void Post([FromBody] string value)
+        {
+        }
+
         /// <summary>
         /// GET: api/<ValuesController>
         /// </summary>
@@ -31,11 +37,43 @@ namespace SquareDMS.RestEndpoint.Controllers
             return "value";
         }
 
-        // POST api/<ValuesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        /// <summary>
+        /// Partial Update of the given FileFormat.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchAsync(int id,
+            [FromBody] JsonPatchDocument<Core::Models.FileFormat> fileFormatPatch)
         {
+            if (fileFormatPatch is null)
+                return BadRequest();
+
+            // create empty fileFormat ..
+            var patchedFileFormat = new Core::Models.FileFormat();
+
+            // .. and apply patch on it
+            fileFormatPatch.ApplyTo(patchedFileFormat);
+
+            if (!TryValidateModel(patchedFileFormat))
+                return BadRequest();
+
+            // create dispatcher
+            var fileFormatDispatcher = new Core::Dispatchers.FileFormatDispatcher();
+            await fileFormatDispatcher.PatchFileFormatAsync(1, id, patchedFileFormat);
+
+            return NoContent();
         }
+
+
+
+
+
+
+
+
+
+
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]

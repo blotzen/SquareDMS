@@ -6,7 +6,7 @@ namespace SquareDMS.DatabaseAccess.ProcedureResults
     /// <summary>
     /// Result with Resultset
     /// </summary>
-    public class RetrievalResult<T> : IProcedureResult where T : IEntity
+    public class RetrievalResult<T> : IProcedureResult where T : IDataTransferObject
     {
         /// <param name="errorCode">Error Code for the Procedure.</param>
         /// <param name="resultset">Retrieved entities</param>
