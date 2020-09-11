@@ -1,7 +1,7 @@
-﻿using SquareDMS.DatabaseAccess.Entities;
+﻿using SquareDMS.DataLibrary.Entities;
 using System.Collections.Generic;
 
-namespace SquareDMS.DatabaseAccess.ProcedureResults
+namespace SquareDMS.DataLibrary.ProcedureResults
 {
     /// <summary>
     /// Result with Resultset

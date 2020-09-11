@@ -1,4 +1,6 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SquareDMS.DataLibrary.Entities
 {
     public class FileFormat : IDataTransferObject
     {
@@ -21,8 +23,10 @@
         /// <summary>
         /// An all lowercase indication of the fileformat.
         /// </summary>
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Extension { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Description { get; private set; }
     }
 }

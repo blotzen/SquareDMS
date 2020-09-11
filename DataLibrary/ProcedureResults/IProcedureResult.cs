@@ -1,4 +1,4 @@
-﻿namespace SquareDMS.DatabaseAccess.ProcedureResults
+﻿namespace SquareDMS.DataLibrary.ProcedureResults
 {
     /// <summary>
     /// Interface for all Procedure Results

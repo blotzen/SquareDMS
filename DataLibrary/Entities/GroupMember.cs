@@ -1,4 +1,4 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿namespace SquareDMS.DataLibrary.Entities
 {
     /// <summary>
     /// Users are members in groups. This entity links them.

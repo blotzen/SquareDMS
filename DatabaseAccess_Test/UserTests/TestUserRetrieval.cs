@@ -44,5 +44,20 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
             Assert.Equal("tarantino", user.FirstName);
             Assert.Equal("grindhouser", user.UserName);
         }
+
+        /// <summary>
+        /// Get a user by his username.
+        /// </summary>
+        [Fact]
+        public async void Get_OneUserByName()
+        {
+            var readResult = await _squareDbMsSql.RetrieveUserByUserNameAsync("blotzen");
+
+            var user = readResult.Resultset.ToList()[0];
+
+            Assert.Equal(0, readResult.ErrorCode);
+            Assert.Single(readResult.Resultset);
+            Assert.Equal("brandl", user.LastName);
+        }
     }
 }

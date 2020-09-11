@@ -1,4 +1,6 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SquareDMS.DataLibrary.Entities
 {
     public class User : IDataTransferObject
     {
@@ -23,12 +25,16 @@
 
         public int Id { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string LastName { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string FirstName { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string UserName { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Email { get; private set; }
 
         public byte[] PasswordHash { get; private set; }

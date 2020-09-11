@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using SquareDMS.Core.Dispatchers;
+using SquareDMS.DataLibrary.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core = SquareDMS.Core;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +26,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<Core::Models.FileFormat> Get()
+        public IEnumerable<FileFormat> Get()
         {
             return null;
         }
@@ -44,13 +45,13 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchAsync(int id,
-            [FromBody] JsonPatchDocument<Core::Models.FileFormat> fileFormatPatch)
+            [FromBody] JsonPatchDocument<FileFormat> fileFormatPatch)
         {
             if (fileFormatPatch is null)
                 return BadRequest();
 
             // create empty fileFormat ..
-            var patchedFileFormat = new Core::Models.FileFormat();
+            var patchedFileFormat = new FileFormat();
 
             // .. and apply patch on it
             fileFormatPatch.ApplyTo(patchedFileFormat);
@@ -59,7 +60,7 @@ namespace SquareDMS.RestEndpoint.Controllers
                 return BadRequest();
 
             // create dispatcher
-            var fileFormatDispatcher = new Core::Dispatchers.FileFormatDispatcher();
+            var fileFormatDispatcher = new FileFormatDispatcher();
             await fileFormatDispatcher.PatchFileFormatAsync(1, id, patchedFileFormat);
 
             return NoContent();

@@ -1,7 +1,7 @@
 ﻿using SquareDMS.DatabaseAccess;
-using SquareDMS.DatabaseAccess.ProcedureResults;
+using SquareDMS.DataLibrary.Entities;
+using SquareDMS.DataLibrary.ProcedureResults;
 using System.Threading.Tasks;
-using Models = SquareDMS.Core.Models;
 
 namespace SquareDMS.Core.Dispatchers
 {
@@ -17,7 +17,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <param name="fileForamtId"></param>
         /// <param name="patchedFileFormat"></param>
         /// <returns></returns>
-        public async Task<ManipulationResult> PatchFileFormatAsync(int userId, int fileForamtId, Models::FileFormat patchedFileFormat)
+        public async Task<ManipulationResult> PatchFileFormatAsync(int userId, int fileForamtId, FileFormat patchedFileFormat)
         {
             ISquareDb squareDb = new SquareDbMsSql(base.DbConnectionString);
 

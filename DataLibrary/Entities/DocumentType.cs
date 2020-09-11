@@ -1,4 +1,6 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SquareDMS.DataLibrary.Entities
 {
     public class DocumentType : IDataTransferObject
     {
@@ -20,11 +22,13 @@
         /// <summary>
         /// Name of the document type.
         /// </summary>
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Name { get; private set; }
 
         /// <summary>
         /// Optional description of the document type.
         /// </summary>
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Description { get; private set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Dapper;
-using SquareDMS.DatabaseAccess.Entities;
-using SquareDMS.DatabaseAccess.ProcedureResults;
+using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
+using SquareDMS.DataLibrary.ProcedureResults;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -1003,6 +1004,32 @@ namespace SquareDMS.DatabaseAccess
             using (var connection = new SqlConnection(_connectionString))
             {
                 users = await connection.QueryAsync<User>("[proc_get_user_s]", parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+
+            var errorCode = parameters.Get<int>("errorCode");
+
+            return new RetrievalResult<User>(errorCode, users);
+        }
+
+        /// <summary>
+        /// Gets a single user by his username. This method does not provide 
+        /// authorization checks!
+        /// </summary>
+        /// <returns>Result with errorCode.</returns>
+        public async Task<RetrievalResult<User>> RetrieveUserByUserNameAsync(string userName)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("@userName", userName, DbType.StringFixedLength, direction: ParameterDirection.Input);
+
+            parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
+
+            IEnumerable<User> users;
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                users = await connection.QueryAsync<User>("[proc_get_user_by_username]", parameters,
                     commandType: CommandType.StoredProcedure);
             }
 

@@ -1,4 +1,4 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿namespace SquareDMS.DataLibrary.Entities
 {
     /// <summary>
     /// The Right a Group has on a Document.

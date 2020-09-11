@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SquareDMS.DatabaseAccess.Entities
+namespace SquareDMS.DataLibrary.Entities
 {
     public class DocumentVersion : IDataTransferObject
     {

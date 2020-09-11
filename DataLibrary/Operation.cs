@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SquareDMS.DatabaseAccess
+namespace SquareDMS.DataLibrary
 {
     public class Operation
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SquareDMS.DatabaseAccess.ProcedureResults
+namespace SquareDMS.DataLibrary.ProcedureResults
 {
     public class ManipulationResult : IProcedureResult
     {

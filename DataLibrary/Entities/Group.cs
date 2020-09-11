@@ -1,4 +1,6 @@
-﻿namespace SquareDMS.DatabaseAccess.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SquareDMS.DataLibrary.Entities
 {
     /// <summary>
     /// Represents a Group in the Square_DB
@@ -22,8 +24,10 @@
 
         public int Id { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Name { get; private set; }
 
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Description { get; private set; }
 
         public bool Admin { get; private set; }

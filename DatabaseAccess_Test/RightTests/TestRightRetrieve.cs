@@ -1,5 +1,5 @@
 ﻿using SquareDMS.DatabaseAccess;
-using SquareDMS.DatabaseAccess.Entities;
+using SquareDMS.DataLibrary.Entities;
 using System.Linq;
 using Xunit;
 

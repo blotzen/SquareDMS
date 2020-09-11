@@ -1,4 +1,4 @@
-﻿namespace SquareDMS.DatabaseAccess
+﻿namespace SquareDMS.DataLibrary
 {
     /// <summary>
     /// Type of Operation

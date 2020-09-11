@@ -1,5 +1,5 @@
-﻿using SquareDMS.DatabaseAccess.Entities;
-using SquareDMS.DatabaseAccess.ProcedureResults;
+﻿using SquareDMS.DataLibrary.Entities;
+using SquareDMS.DataLibrary.ProcedureResults;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -241,6 +241,13 @@ namespace SquareDMS.DatabaseAccess
         Task<RetrievalResult<User>> RetrieveUserAsync(int userId, [Optional] int? retrieveUserId,
            [Optional] string lastName, [Optional] string firstName, [Optional] string userName,
            [Optional] string email, [Optional] bool? active);
+
+        /// <summary>
+        /// Gets a single user by his username. This method does not provide 
+        /// authorization checks!
+        /// </summary>
+        /// <returns>Result with errorCode.</returns>
+        Task<RetrievalResult<User>> RetrieveUserByUserNameAsync(string userName);
 
         /// <summary>
         /// Updates a user given by the parameters.

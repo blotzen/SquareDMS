@@ -1,5 +1,5 @@
 ﻿using SquareDMS.DatabaseAccess;
-using SquareDMS.DatabaseAccess.Entities;
+using SquareDMS.DataLibrary.Entities;
 using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.GroupTests
