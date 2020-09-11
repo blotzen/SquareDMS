@@ -6,10 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using SquareDMS.RestEndpoint.Services;
 using System;
 using System.Text;
 
-namespace SquareDMS.RestEndpoint
+namespace RestEndpoint
 {
     public class Startup
     {
@@ -38,13 +39,14 @@ namespace SquareDMS.RestEndpoint
                     ValidateAudience = false,       // should be true, if valid audience is set
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt: Issuer"],
-                    ValidAudience = Configuration["Jwt: Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt: SecretKey"])),
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
                     ClockSkew = TimeSpan.Zero
                 };
             });
 
+            services.AddScoped<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

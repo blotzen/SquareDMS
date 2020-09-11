@@ -5,7 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Core = SquareDMS.Core.Dispatchers;
+using SquareDMS.Core.Dispatchers;
+using SquareDMS.Core;
 
 namespace SquareDMS.RestEndpoint.Services
 {
@@ -15,45 +16,56 @@ namespace SquareDMS.RestEndpoint.Services
     public class UserService
     {
         private readonly IConfiguration _configuration;
-        private readonly Core::UserDispatcher _userDispatcher;
+        private readonly UserDispatcher _userDispatcher;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="configuration"></param>
-        public UserService(IConfiguration configuration, Core::UserDispatcher userDispatcher)
+        public UserService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _userDispatcher = userDispatcher;
+            _userDispatcher = new UserDispatcher();
         }
 
         /// <summary>
-        /// 
+        /// Authenticates the user and creates the auth. response.
+        /// Returns null if authentication failed
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public async Task<Authentication.Response> Authenticate(Authentication.Request request)
         {
-            var userName = request.UserName;
-            var password = request.Password;
+            Credential userCredential = null;
 
+            try
+            {
+                userCredential = new Credential(request.UserName,
+                    request.Password,
+                    int.Parse(_configuration["Pbkdf2:Iterations"]));
+            }
+            catch (ArgumentException argEx)
+            {
+                var innerEx = argEx.InnerException;
+                // TODO: Log here
+                return null;
+            }
 
-            //var user = await _userDispatcher.
+            var user = await _userDispatcher.CheckUserInformationAsync(userCredential);
 
+            // authentication failed
+            if (user is null)
+                return null;
 
-            //bool match = _userDispatcher.ComparePasswords(userName, password)
+            var jwt = GenerateJwt(user.Id);
 
-            // if match return response......
-
-            throw new NotImplementedException();
+            return new Authentication.Response(user, jwt);
         }
 
         /// <summary>
         /// Generates a JwtToken for the given userId.
         /// </summary>
-        private string GenerateJwtToken(int userId)
+        private string GenerateJwt(int userId)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt: SecretKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {

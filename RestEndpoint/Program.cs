@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace SquareDMS.RestEndpoint
+namespace RestEndpoint
 {
     public class Program
     {

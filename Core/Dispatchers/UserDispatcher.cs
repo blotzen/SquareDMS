@@ -1,6 +1,8 @@
 ﻿using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SquareDMS.Core.Dispatchers
@@ -17,29 +19,28 @@ namespace SquareDMS.Core.Dispatchers
             _squareDb = new SquareDbMsSql(DbConnectionString);
         }
 
-        //public async Task<Models::User> GetUserByUserNameAsync(string userName)
-        //{
-        //    var userEntity = await _squareDb.RetrieveUserByUserNameAsync(userName);
+        /// <summary>
+        /// Validates the given credentials. Checks if the password matches the one
+        /// stored in the database. Also checks if the username is valid and has a matching
+        /// userId in the database. Returns null if the credentials are invalid or wrong.
+        /// </summary>
+        public async Task<User> CheckUserInformationAsync(Credential userCredential)
+        {
+            // gets the first result in the resultset, its only one user.
+            var user = (await _squareDb.RetrieveUserByUserNameAsync(userCredential.UserName)).Resultset.ToList()[0];
 
-        //    var userModel = new Models.User();
-        //    userModel.Id
-        //}
+            // user not found in db
+            if (user is null)
+                return null;
 
-        //public bool ComparePasswordToHash(string password, byte[] passwordHash)
-        //{
+            var pwsMatch = Credential.MatchPasswordHashes(user.PasswordHash, userCredential.HashPassword());
 
-        //}
+            // passwords dont match
+            if (!pwsMatch)
+                return null;
 
-        //private byte[] HashPassword(string password)
-        //{
-
-        //}
-
-
-
-
-
-
+            return user;
+        }
 
 
         /// <summary>
@@ -58,7 +59,5 @@ namespace SquareDMS.Core.Dispatchers
 
         //public async Task<RetrievalResult<User>> GetUsersAsync()
 
-        // brauche methode um Passwort für benutzer abzurufen, ohne dass ich die userId habe.
-        // methode die die passwörter dann vergleicht usw. sieht UserService.
     }
 }
