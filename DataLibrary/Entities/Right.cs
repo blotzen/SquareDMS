@@ -24,11 +24,11 @@
             AccessLevel = accessLevel;
         }
 
-        public int GroupId { get; private set; }
+        public int GroupId { get; set; }
 
-        public int DocumentId { get; private set; }
+        public int DocumentId { get; set; }
 
-        public AccessLevel AccessLevel { get; private set; }
+        public AccessLevel AccessLevel { get; set; }
     }
 
     /// <summary>

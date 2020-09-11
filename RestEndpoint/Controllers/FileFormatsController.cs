@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DataLibrary.Entities;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace SquareDMS.RestEndpoint.Controllers
 {
+    [Authorize]
     [Route("api/fileformats")]
     [ApiController]
     public class FileFormatsController : ControllerBase

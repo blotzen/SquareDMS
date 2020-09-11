@@ -23,12 +23,12 @@ namespace SquareDMS.DataLibrary.Entities
         /// Name of the document type.
         /// </summary>
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Optional description of the document type.
         /// </summary>
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Description { get; private set; }
+        public string Description { get; set; }
     }
 }

@@ -19,8 +19,8 @@
             UserId = userId;
         }
 
-        public int GroupId { get; private set; }
+        public int GroupId { get; set; }
 
-        public int UserId { get; private set; }
+        public int UserId { get; set; }
     }
 }

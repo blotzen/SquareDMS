@@ -24,9 +24,9 @@ namespace SquareDMS.DataLibrary.Entities
         /// An all lowercase indication of the fileformat.
         /// </summary>
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Extension { get; private set; }
+        public string Extension { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Description { get; private set; }
+        public string Description { get; set; }
     }
 }

@@ -21,15 +21,15 @@ namespace SquareDMS.DataLibrary.Entities
 
         public int Id { get; private set; }
 
-        public int Creator { get; private set; }
+        public int Creator { get; set; }
 
-        public int DocumentType { get; private set; }
+        public int DocumentType { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        public bool Locked { get; private set; }
+        public bool Locked { get; set; }
 
-        public bool Discard { get; private set; }
+        public bool Discard { get; set; }
     }
 }

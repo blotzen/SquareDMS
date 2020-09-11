@@ -5,11 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Entities\x2ynrtqq.umg~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="ProcedureResults\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 

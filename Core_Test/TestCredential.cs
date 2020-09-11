@@ -1,6 +1,6 @@
+using SquareDMS.Core;
 using System;
 using Xunit;
-using SquareDMS.Core;
 
 namespace SquareDMS.Core_Test
 {
@@ -9,11 +9,10 @@ namespace SquareDMS.Core_Test
     /// </summary>
     public class TestCredential
     {
-        static readonly string _username = "bob";
-        static readonly int _iterations = 100_000;
-
-        static readonly Credential _cred1 = new Credential(_username, "Supersecure!246", _iterations);
-        static readonly Credential _cred2 = new Credential(_username, "Supersecure!247", _iterations);
+        private static readonly string _username = "bob";
+        private static readonly int _iterations = 100_000;
+        private static readonly Credential _cred1 = new Credential(_username, "Supersecure!246", _iterations);
+        private static readonly Credential _cred2 = new Credential(_username, "Supersecure!247", _iterations);
 
         /// <summary>
         /// Checks if the constructor works for valid objects.

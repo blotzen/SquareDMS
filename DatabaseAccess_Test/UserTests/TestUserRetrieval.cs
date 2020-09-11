@@ -25,7 +25,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
             var readResult = await _squareDbMsSql.RetrieveUserAsync(1);
 
             Assert.Equal(0, readResult.ErrorCode);
-            Assert.Equal(5, readResult.Resultset.Count());
+            Assert.Equal(6, readResult.Resultset.Count());
         }
 
         /// <summary>

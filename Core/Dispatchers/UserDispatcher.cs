@@ -1,7 +1,6 @@
 ﻿using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace SquareDMS.Core.Dispatchers
         /// stored in the database. Also checks if the username is valid and has a matching
         /// userId in the database. Returns null if the credentials are invalid or wrong.
         /// </summary>
-        public async Task<User> CheckUserInformationAsync(Credential userCredential)
+        public async Task<User> CheckUserCredentialAsync(Credential userCredential)
         {
             // gets the first result in the resultset, its only one user.
             var user = (await _squareDb.RetrieveUserByUserNameAsync(userCredential.UserName)).Resultset.ToList()[0];
@@ -42,6 +41,17 @@ namespace SquareDMS.Core.Dispatchers
             return user;
         }
 
+        /// <summary>
+        /// Creates a new user in the database or returns an errorcode if this
+        /// operation faulty.
+        /// </summary>
+        /// <param name="userId">User that creates the user</param>
+        /// <param name="user">User to be created</param>
+        /// <returns>ManipulationResult with errorCode</returns>
+        public async Task<ManipulationResult> CreateUserAsync(int userId, User user)
+        {
+            return await _squareDb.CreateUserAsync(userId, user);
+        }
 
         /// <summary>
         /// 

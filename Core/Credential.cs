@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace SquareDMS.Core

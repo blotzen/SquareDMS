@@ -1,17 +1,20 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SquareDMS.Core;
+using SquareDMS.Core.Dispatchers;
+using SquareDMS.DataLibrary.Entities;
+using SquareDMS.DataLibrary.ProcedureResults;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using SquareDMS.Core.Dispatchers;
-using SquareDMS.Core;
 
 namespace SquareDMS.RestEndpoint.Services
 {
     /// <summary>
     /// This service provides the functionality to 
+    /// the usersContoller
     /// </summary>
     public class UserService
     {
@@ -28,28 +31,16 @@ namespace SquareDMS.RestEndpoint.Services
             _userDispatcher = new UserDispatcher();
         }
 
+        #region Authentication
         /// <summary>
         /// Authenticates the user and creates the auth. response.
         /// Returns null if authentication failed
         /// </summary>
         public async Task<Authentication.Response> Authenticate(Authentication.Request request)
         {
-            Credential userCredential = null;
+            Credential userCredential = CreateCredential(request.UserName, request.Password);
 
-            try
-            {
-                userCredential = new Credential(request.UserName,
-                    request.Password,
-                    int.Parse(_configuration["Pbkdf2:Iterations"]));
-            }
-            catch (ArgumentException argEx)
-            {
-                var innerEx = argEx.InnerException;
-                // TODO: Log here
-                return null;
-            }
-
-            var user = await _userDispatcher.CheckUserInformationAsync(userCredential);
+            var user = await _userDispatcher.CheckUserCredentialAsync(userCredential);
 
             // authentication failed
             if (user is null)
@@ -81,5 +72,41 @@ namespace SquareDMS.RestEndpoint.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        #endregion
+
+        #region CRUD-Operations
+        /// <summary>
+        /// Creates the user. Before doing that the password hash is computed and
+        /// the plaintext password is deleted.
+        /// </summary>
+        public async Task<ManipulationResult> CreateUserAsync(int userId, User user)
+        {
+            var userCredential = CreateCredential(user.UserName, user.Password);
+
+            // set the password hash and clear the stored pw
+            user.PasswordHash = userCredential.HashPassword();
+            user.Password = string.Empty;
+
+            return await _userDispatcher.CreateUserAsync(userId, user);
+        }
+
+        #endregion
+
+        #region Credential-Operations
+        private Credential CreateCredential(string userName, string password)
+        {
+            try
+            {
+                return new Credential(userName, password,
+                    int.Parse(_configuration["Pbkdf2:Iterations"]));
+            }
+            catch (ArgumentException argEx)
+            {
+                var innerEx = argEx.InnerException;
+                // TODO: Log here
+                return null;
+            }
+        }
+        #endregion
     }
 }

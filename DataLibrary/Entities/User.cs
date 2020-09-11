@@ -26,19 +26,25 @@ namespace SquareDMS.DataLibrary.Entities
         public int Id { get; private set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string LastName { get; private set; }
+        public string LastName { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string FirstName { get; private set; }
+        public string FirstName { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string UserName { get; private set; }
+        public string UserName { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
-        public string Email { get; private set; }
+        public string Email { get; set; }
 
-        public byte[] PasswordHash { get; private set; }
+        /// <summary>
+        /// Password unencrypted
+        /// </summary>
+        [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
+        public string Password { get; set; }
 
-        public bool? Active { get; private set; }
+        public byte[] PasswordHash { get; set; }
+
+        public bool? Active { get; set; }
     }
 }
