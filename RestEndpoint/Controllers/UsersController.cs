@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using SquareDMS.Core.Dispatchers;
+using RestEndpoint;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Services;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -38,11 +36,14 @@ namespace SquareDMS.RestEndpoint.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> LoginAsync([FromBody] Authentication.Request authenticateRequest)
         {
+            if (authenticateRequest is null)
+                return BadRequest("Auth Request body is empty");
+
             var authenticationResponse = await _userService.Authenticate(authenticateRequest);
 
             if (authenticationResponse is null)
             {
-                return BadRequest("Username or password is incorrect");
+                return BadRequest("Username or password is incorrect or user is inactive.");
             }
 
             return Ok(authenticationResponse);
@@ -52,71 +53,82 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new User in the DMS.
         /// </summary>
         /// <returns>Manipulationresult</returns>
-        [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostUser(User user)
+        public async Task<ActionResult<ManipulationResult>> PostUserAsync(User user)
         {
-            var postResult = await _userService.CreateUserAsync(1, user);
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
+
+            if (userIdClaimed is null)
+                return BadRequest();
+
+            var postResult = await _userService.CreateUserAsync(userIdClaimed.Value, user);
 
             return Ok(postResult);
-
         }
 
         /// <summary>
-        /// 
+        /// Gets a User with the given params. Every parameter has to
+        /// be supplied with query syntax (e.g. /api/users/?UserId=7)
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        [HttpGet]
+        public async Task<ActionResult<RetrievalResult<User>>> GetUserAsync([FromQuery] int? userId = null,
+            [FromQuery] string lastName = null, [FromQuery] string firstName = null,
+            [FromQuery] string userName = null, [FromQuery] string email = null,
+            [FromQuery] bool? active = null)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
-            if (identity != null)
-            {
+            if (userIdClaimed is null)
+                return BadRequest();
 
-            }
-
-            return Ok(new User());
+            return await _userService.RetrieveUserAsync(userIdClaimed.Value, userId, lastName,
+                firstName, userName, email, active);
         }
 
-        //public async Task<IActionResult> GetUsers(int id)
-        //{
-
-        //}
-
         /// <summary>
-        /// 
+        /// Patches (Updates) a user.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="userPatch"></param>
-        /// <returns></returns>
+        /// <param name="id">Id of the user to be updated</param>
+        /// <param name="userPatch">JSON Patch body</param>
         [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchAsync(int id,
+        public async Task<ActionResult<ManipulationResult>> PatchAsync(int id,
             [FromBody] JsonPatchDocument<User> userPatch)
         {
             if (userPatch is null)
+                return BadRequest("Patch body is empty");
+
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
+
+            if (userIdClaimed is null)
                 return BadRequest();
 
             // create empty user ..
             var patchedUser = new User();
 
-            //HttpContext.Request.Headers[]
-
             // .. and apply patch on it
             userPatch.ApplyTo(patchedUser);
 
             if (!TryValidateModel(patchedUser))
-                return BadRequest();
+                return BadRequest("Patch syntax invalid");
 
-            // create dispatcher
-            var userDispatcher = new UserDispatcher();
-            await userDispatcher.PatchUserAsync(1, id, patchedUser);
+            var result = await _userService.UpdateUserAsync(userIdClaimed.Value, patchedUser);
 
-            return NoContent();
+            return Ok(result);
         }
 
+        /// <summary>
+        /// Deletes a user with the given id, if 
+        /// the executing user has permissions.
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ManipulationResult>> DeleteAsync(int id)
+        {
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
+            if (userIdClaimed is null)
+                return BadRequest();
+
+            return await _userService.DeleteUserAsync(userIdClaimed.Value, id);
+        }
     }
 }
