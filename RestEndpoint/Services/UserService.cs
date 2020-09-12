@@ -14,7 +14,9 @@ namespace SquareDMS.RestEndpoint.Services
 {
     /// <summary>
     /// This service provides the functionality to 
-    /// the usersContoller
+    /// the usersContoller e.g. generating the JWT 
+    /// and calling the necessary methods to hash 
+    /// the password.
     /// </summary>
     public class UserService
     {
@@ -34,7 +36,7 @@ namespace SquareDMS.RestEndpoint.Services
         #region Authentication
         /// <summary>
         /// Authenticates the user and creates the auth. response.
-        /// Returns null if authentication failed
+        /// Returns null if authentication failed or user is not active.
         /// </summary>
         public async Task<Authentication.Response> Authenticate(Authentication.Request request)
         {
@@ -42,8 +44,10 @@ namespace SquareDMS.RestEndpoint.Services
 
             var user = await _userDispatcher.CheckUserCredentialAsync(userCredential);
 
-            // authentication failed
-            if (user is null)
+            // authentication failed if CheckUserCredentialAsync
+            // didnt find the user or the pws dont match OR if the
+            // user is not active.
+            if (user is null || !user.Active.GetValueOrDefault())
                 return null;
 
             var jwt = GenerateJwt(user.Id);
@@ -79,7 +83,7 @@ namespace SquareDMS.RestEndpoint.Services
         /// Creates the user. Before doing that the password hash is computed and
         /// the plaintext password is deleted.
         /// </summary>
-        public async Task<ManipulationResult> CreateUserAsync(int userId, User user)
+        public async Task<ManipulationResult> CreateUserAsync(int id, User user)
         {
             var userCredential = CreateCredential(user.UserName, user.Password);
 
@@ -87,9 +91,38 @@ namespace SquareDMS.RestEndpoint.Services
             user.PasswordHash = userCredential.HashPassword();
             user.Password = string.Empty;
 
-            return await _userDispatcher.CreateUserAsync(userId, user);
+            return await _userDispatcher.PostUserAsync(id, user);
         }
 
+        /// <summary>
+        /// Passes the get user command with the given params to the UserDispatcher.
+        /// </summary>
+        public async Task<RetrievalResult<User>> RetrieveUserAsync(int id, int? userId = null,
+            string lastName = null, string firstName = null,
+            string userName = null, string email = null,
+            bool? active = null)
+        {
+            return await _userDispatcher.GetUsersAsync(id, userId, lastName, firstName, userName,
+                email, active);
+        }
+
+        /// <summary>
+        /// Update a user.
+        /// </summary>
+        public async Task<ManipulationResult> UpdateUserAsync(int id, User patchedUser)
+        {
+            return await _userDispatcher.PatchUserAsync(id, patchedUser.Id, patchedUser);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ManipulationResult> DeleteUserAsync(int id, int deleteUserId)
+        {
+            return await _userDispatcher.DeleteUserAsync(id, deleteUserId);
+        }
         #endregion
 
         #region Credential-Operations

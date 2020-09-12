@@ -45,29 +45,49 @@ namespace SquareDMS.Core.Dispatchers
         /// Creates a new user in the database or returns an errorcode if this
         /// operation faulty.
         /// </summary>
-        /// <param name="userId">User that creates the user</param>
+        /// <param name="id">User that creates the user</param>
         /// <param name="user">User to be created</param>
         /// <returns>ManipulationResult with errorCode</returns>
-        public async Task<ManipulationResult> CreateUserAsync(int userId, User user)
+        public async Task<ManipulationResult> PostUserAsync(int id, User user)
         {
-            return await _squareDb.CreateUserAsync(userId, user);
+            return await _squareDb.CreateUserAsync(id, user);
+        }
+
+        /// <summary>
+        /// Gets the users that match the params.
+        /// </summary>
+        public async Task<RetrievalResult<User>> GetUsersAsync(int id, int? userId = null,
+            string lastName = null, string firstName = null,
+            string userName = null, string email = null,
+            bool? active = null)
+        {
+            return await _squareDb.RetrieveUserAsync(id, userId, lastName, firstName, userName, email, active);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="id"></param>
         /// <param name="fileForamtId"></param>
         /// <param name="patchedFileFormat"></param>
         /// <returns></returns>
-        public async Task<ManipulationResult> PatchUserAsync(int userId, int updateUserId, User patchedUser)
+        public async Task<ManipulationResult> PatchUserAsync(int id, int updateUserId, User patchedUser)
         {
-            return await _squareDb.UpdateUserAsync(userId, updateUserId,
+            return await _squareDb.UpdateUserAsync(id, updateUserId,
                 patchedUser.LastName, patchedUser.FirstName, patchedUser.UserName,
                 patchedUser.Email, patchedUser.PasswordHash, patchedUser.Active);
         }
 
-        //public async Task<RetrievalResult<User>> GetUsersAsync()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="deleteUserId"></param>
+        /// <returns></returns>
+        public async Task<ManipulationResult> DeleteUserAsync(int id, int deleteUserId)
+        {
+            return await _squareDb.DeleteUserAsync(id, deleteUserId);
+        }
 
     }
 }
