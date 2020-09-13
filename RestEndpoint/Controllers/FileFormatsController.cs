@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace SquareDMS.RestEndpoint.Controllers
 {
     [Authorize]
-    [Route("api/fileformats")]
+    [Route("api/v1/fileformats")]
     [ApiController]
     public class FileFormatsController : ControllerBase
     {

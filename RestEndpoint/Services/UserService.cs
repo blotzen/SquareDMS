@@ -27,10 +27,10 @@ namespace SquareDMS.RestEndpoint.Services
         /// 
         /// </summary>
         /// <param name="configuration"></param>
-        public UserService(IConfiguration configuration)
+        public UserService(IConfiguration configuration, UserDispatcher userDispatcher)
         {
             _configuration = configuration;
-            _userDispatcher = new UserDispatcher();
+            _userDispatcher = userDispatcher;
         }
 
         #region Authentication

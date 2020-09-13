@@ -12,16 +12,16 @@ using System.Threading.Tasks;
 namespace SquareDMS.RestEndpoint.Controllers
 {
     [Authorize]
-    [Route("api/users")]
+    [Route("api/v1/users")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly UserService _userService;
 
         /// <summary>
         /// Receives the UserService via Dependency Injection.
         /// </summary>
-        public UsersController(UserService userService)
+        public UserController(UserService userService)
         {
             _userService = userService;
         }
@@ -63,6 +63,8 @@ namespace SquareDMS.RestEndpoint.Controllers
 
             var postResult = await _userService.CreateUserAsync(userIdClaimed.Value, user);
 
+            //if (postResult.ManipulatedAmount() == 1) { } // prüfung im Service machen und hier nur den Statuscode zurückgeben?
+
             return Ok(postResult);
         }
 
@@ -91,7 +93,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// <param name="id">Id of the user to be updated</param>
         /// <param name="userPatch">JSON Patch body</param>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchAsync(int id,
+        public async Task<ActionResult<ManipulationResult>> PatchUserAsync(int id,
             [FromBody] JsonPatchDocument<User> userPatch)
         {
             if (userPatch is null)
@@ -121,7 +123,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// the executing user has permissions.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteAsync(int id)
+        public async Task<ActionResult<ManipulationResult>> DeleteUserAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
