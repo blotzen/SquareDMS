@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace SquareDMS.RestEndpoint.Controllers
 {
+    /// <summary>
+    /// Handles the HTTP-Operations for the 
+    /// Ressource User.
+    /// </summary>
     [Authorize]
     [Route("api/v1/users")]
     [ApiController]
@@ -54,7 +58,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// </summary>
         /// <returns>Manipulationresult</returns>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostUserAsync(User user)
+        public async Task<ActionResult<ManipulationResult>> PostUserAsync([FromBody] User user)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -70,7 +74,7 @@ namespace SquareDMS.RestEndpoint.Controllers
 
         /// <summary>
         /// Gets a User with the given params. Every parameter has to
-        /// be supplied with query syntax (e.g. /api/users/?UserId=7)
+        /// be supplied with query syntax (e.g. .../users/?UserId=7)
         /// </summary>
         [HttpGet]
         public async Task<ActionResult<RetrievalResult<User>>> GetUserAsync([FromQuery] int? userId = null,
@@ -83,8 +87,8 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (userIdClaimed is null)
                 return BadRequest();
 
-            return await _userService.RetrieveUserAsync(userIdClaimed.Value, userId, lastName,
-                firstName, userName, email, active);
+            return Ok(await _userService.RetrieveUserAsync(userIdClaimed.Value, userId, lastName,
+                firstName, userName, email, active));
         }
 
         /// <summary>
@@ -113,9 +117,7 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (!TryValidateModel(patchedUser))
                 return BadRequest("Patch syntax invalid");
 
-            var result = await _userService.UpdateUserAsync(userIdClaimed.Value, patchedUser);
-
-            return Ok(result);
+            return Ok(await _userService.UpdateUserAsync(userIdClaimed.Value, patchedUser));
         }
 
         /// <summary>
@@ -130,7 +132,7 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (userIdClaimed is null)
                 return BadRequest();
 
-            return await _userService.DeleteUserAsync(userIdClaimed.Value, id);
+            return Ok(await _userService.DeleteUserAsync(userIdClaimed.Value, id));
         }
     }
 }

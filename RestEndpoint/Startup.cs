@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using SquareDMS.DatabaseAccess;
 using SquareDMS.RestEndpoint.Services;
 using System;
 using System.Text;
@@ -48,6 +49,7 @@ namespace RestEndpoint
 
             services.AddScoped<UserService>();
             services.AddScoped<SquareDMS.Core.Dispatchers.UserDispatcher>();
+            services.AddScoped<ISquareDb, SquareDbMsSql>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

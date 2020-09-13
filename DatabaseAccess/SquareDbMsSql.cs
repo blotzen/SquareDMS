@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
@@ -26,9 +27,9 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <param name="connectonString">Connection String to the
         /// MS SQL DB.</param>
-        public SquareDbMsSql(string connectonString)
+        public SquareDbMsSql(IConfiguration configuration)
         {
-            _connectionString = connectonString;
+            _connectionString = configuration["MsSqlDb:ConnectionString"].ToString();
         }
 
         #region Document-Operations

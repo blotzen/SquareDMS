@@ -10,19 +10,48 @@ namespace SquareDMS.Core.Dispatchers
     /// </summary>
     public class FileFormatDispatcher : Dispatcher
     {
+        private readonly ISquareDb _squareDb;
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="fileForamtId"></param>
-        /// <param name="patchedFileFormat"></param>
-        /// <returns></returns>
-        public async Task<ManipulationResult> PatchFileFormatAsync(int userId, int fileForamtId, FileFormat patchedFileFormat)
+        public FileFormatDispatcher(ISquareDb squareDb)
         {
-            ISquareDb squareDb = new SquareDbMsSql(base.DbConnectionString);
+            _squareDb = squareDb;
+        }
 
-            return await squareDb.UpdateFileFormatAsync(userId, fileForamtId,
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<ManipulationResult> CreateFileFormatAsync(int userId, FileFormat fileFormat)
+        {
+            return await _squareDb.CreateFileFormatAsync(userId, fileFormat);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<RetrievalResult<FileFormat>> RetrieveFileFormatsAsync(int userId, int? id,
+            string extension, string description)
+        {
+            return await _squareDb.RetrieveFileFormatsAsync(userId, id, extension, description);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<ManipulationResult> UpdateFileFormatAsync(int userId, int id, FileFormat patchedFileFormat)
+        {
+            return await _squareDb.UpdateFileFormatAsync(userId, id,
                 patchedFileFormat.Extension, patchedFileFormat.Description);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<ManipulationResult> DeleteFileFormatAsync(int userId, int id)
+        {
+            return await _squareDb.DeleteFileFormatAsync(userId, id);
         }
     }
 }

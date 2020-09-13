@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 
 namespace SquareDMS.Core.Dispatchers
 {
+    /// <summary>
+    /// Mostly passes the operations from the
+    /// UserController to the database. Does some checks 
+    /// regarding the Credentials.
+    /// </summary>
     public class UserDispatcher : Dispatcher
     {
         private readonly ISquareDb _squareDb;
 
         /// <summary>
-        /// 
+        /// Constructor needs connection string to db.
         /// </summary>
-        public UserDispatcher()
+        public UserDispatcher(ISquareDb squareDb)
         {
-            _squareDb = new SquareDbMsSql(DbConnectionString);
+            _squareDb = squareDb;
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <param name="id">User that creates the user</param>
         /// <param name="user">User to be created</param>
         /// <returns>ManipulationResult with errorCode</returns>
-        public async Task<ManipulationResult> PostUserAsync(int id, User user)
+        public async Task<ManipulationResult> CreateUserAsync(int id, User user)
         {
             return await _squareDb.CreateUserAsync(id, user);
         }
@@ -56,7 +61,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// Gets the users that match the params.
         /// </summary>
-        public async Task<RetrievalResult<User>> GetUsersAsync(int id, int? userId = null,
+        public async Task<RetrievalResult<User>> RetrieveUsersAsync(int id, int? userId = null,
             string lastName = null, string firstName = null,
             string userName = null, string email = null,
             bool? active = null)
@@ -65,13 +70,9 @@ namespace SquareDMS.Core.Dispatchers
         }
 
         /// <summary>
-        /// 
+        /// Updates a user.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="fileForamtId"></param>
-        /// <param name="patchedFileFormat"></param>
-        /// <returns></returns>
-        public async Task<ManipulationResult> PatchUserAsync(int id, int updateUserId, User patchedUser)
+        public async Task<ManipulationResult> UpdateUserAsync(int id, int updateUserId, User patchedUser)
         {
             return await _squareDb.UpdateUserAsync(id, updateUserId,
                 patchedUser.LastName, patchedUser.FirstName, patchedUser.UserName,
@@ -79,11 +80,8 @@ namespace SquareDMS.Core.Dispatchers
         }
 
         /// <summary>
-        /// 
+        /// Deletes a user.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="deleteUserId"></param>
-        /// <returns></returns>
         public async Task<ManipulationResult> DeleteUserAsync(int id, int deleteUserId)
         {
             return await _squareDb.DeleteUserAsync(id, deleteUserId);

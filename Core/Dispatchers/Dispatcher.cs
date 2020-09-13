@@ -7,9 +7,9 @@
     {
         public Dispatcher()
         {
-            DbConnectionString = Globals.MSSQL_CONNECTION_STRING;
+            
         }
 
-        public string DbConnectionString { get; }
+        
     }
 }

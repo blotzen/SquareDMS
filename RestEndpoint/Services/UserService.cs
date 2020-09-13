@@ -24,9 +24,8 @@ namespace SquareDMS.RestEndpoint.Services
         private readonly UserDispatcher _userDispatcher;
 
         /// <summary>
-        /// 
+        /// Configuration and UserDispatcher are injected via DI.
         /// </summary>
-        /// <param name="configuration"></param>
         public UserService(IConfiguration configuration, UserDispatcher userDispatcher)
         {
             _configuration = configuration;
@@ -91,7 +90,7 @@ namespace SquareDMS.RestEndpoint.Services
             user.PasswordHash = userCredential.HashPassword();
             user.Password = string.Empty;
 
-            return await _userDispatcher.PostUserAsync(id, user);
+            return await _userDispatcher.CreateUserAsync(id, user);
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace SquareDMS.RestEndpoint.Services
             string userName = null, string email = null,
             bool? active = null)
         {
-            return await _userDispatcher.GetUsersAsync(id, userId, lastName, firstName, userName,
+            return await _userDispatcher.RetrieveUsersAsync(id, userId, lastName, firstName, userName,
                 email, active);
         }
 
@@ -111,7 +110,7 @@ namespace SquareDMS.RestEndpoint.Services
         /// </summary>
         public async Task<ManipulationResult> UpdateUserAsync(int id, User patchedUser)
         {
-            return await _userDispatcher.PatchUserAsync(id, patchedUser.Id, patchedUser);
+            return await _userDispatcher.UpdateUserAsync(id, patchedUser.Id, patchedUser);
         }
 
         /// <summary>
