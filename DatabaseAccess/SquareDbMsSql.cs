@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
@@ -30,6 +31,14 @@ namespace SquareDMS.DatabaseAccess
         public SquareDbMsSql(IConfiguration configuration)
         {
             _connectionString = configuration["MsSqlDb:ConnectionString"].ToString();
+        }
+
+        /// <summary>
+        /// Constructor for testing where the conStr. is directly supplied.
+        /// </summary>
+        public SquareDbMsSql(string connectionString)
+        {
+            _connectionString = connectionString;
         }
 
         #region Document-Operations
@@ -318,9 +327,11 @@ namespace SquareDMS.DatabaseAccess
             parameters.Add("@createdDocumentVersions", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@transactionContext", template_1, DbType.Binary, direction: ParameterDirection.Output, size: 16);
             parameters.Add("@filePath", template_2, DbType.String, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             int errorCode = 0;
             int createdDocumentVersions = 0;
+            int? createdId = null;
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -336,13 +347,14 @@ namespace SquareDMS.DatabaseAccess
 
                     var transactionContext = parameters.Get<byte[]>("transactionContext");
                     var filePath = parameters.Get<string>("filePath");
+                    createdId = parameters.Get<int?>("createdId");
 
                     bool payloadWriteResult = false;
 
                     // meta data insert successful
                     if (errorCode == 0)
                     {
-                        payloadWriteResult = await WriteDocumentVersionPayloadAsync(filePath, transactionContext, docVersion.FilestreamData);
+                        payloadWriteResult = await WriteDocumentVersionPayloadAsync(filePath, transactionContext, docVersion.FormFile);
 
                         // payload insert successful
                         if (payloadWriteResult)
@@ -354,12 +366,16 @@ namespace SquareDMS.DatabaseAccess
                             await transaction.RollbackAsync();
                             errorCode = 129;
                             createdDocumentVersions = 0; // when rolled back no documents have been created
+                            createdId = null;
                         }
                     }
                 }
             }
 
-            return new ManipulationResult(errorCode, new Operation(typeof(DocumentVersion), createdDocumentVersions, OperationType.Create));
+            var result = new ManipulationResult(errorCode, new Operation(typeof(DocumentVersion), createdDocumentVersions, OperationType.Create));
+            // result.ManipulatedId = createdId; // for next feature: when the payload should be put into the cache after insertion.
+
+            return result;
         }
 
         /// <summary>
@@ -468,16 +484,17 @@ namespace SquareDMS.DatabaseAccess
         /// Writes the given document payload.
         /// </summary>
         /// <returns>True if successful, false if not.</returns>
-        private async Task<bool> WriteDocumentVersionPayloadAsync(string filePath, byte[] transactionId, byte[] payload)
+        private async Task<bool> WriteDocumentVersionPayloadAsync(string filePath, byte[] transactionId, IFormFile formFile)
         {
-            if (filePath is null || transactionId is null || payload is null)
+            if (filePath is null || transactionId is null || formFile is null)
                 return false;
 
             try
             {
                 using (var sqlFileStream = new SqlFileStream(filePath, transactionId, FileAccess.Write))
                 {
-                    await sqlFileStream.WriteAsync(payload);
+                    await formFile.CopyToAsync(sqlFileStream);
+                    //await sqlFileStream.WriteAsync(payload);
                 }
 
                 return true;

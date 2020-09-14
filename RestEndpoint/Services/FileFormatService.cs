@@ -22,7 +22,7 @@ namespace SquareDMS.RestEndpoint.Services
             _fileFormatDispatcher = fileFormatDispatcher;
         }
 
-        #region CRUD-Operationen
+        #region CRUD-Operations
         /// <summary>
         /// 
         /// </summary>

@@ -6,10 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using RestEndpoint.Services;
 using SquareDMS.DatabaseAccess;
 using SquareDMS.RestEndpoint.Services;
 using System;
 using System.Text;
+using SquareDMS.Core.Dispatchers;
+using SquareDMS.CacheAccess;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace RestEndpoint
 {
@@ -47,9 +52,29 @@ namespace RestEndpoint
                 };
             });
 
-            services.AddScoped<UserService>();
-            services.AddScoped<SquareDMS.Core.Dispatchers.UserDispatcher>();
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = null;
+            });
+
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MultipartHeadersLengthLimit = int.MaxValue;
+            });
+
+            // add db to di
             services.AddScoped<ISquareDb, SquareDbMsSql>();
+
+            // add cache to di as singleton
+            services.AddSingleton<ISquareCache, SquareCacheRedis>();
+
+            services.AddScoped<UserService>();
+            services.AddScoped<UserDispatcher>();
+
+            services.AddScoped<DocumentVersionService>();
+            services.AddScoped<DocumentVersionDispatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

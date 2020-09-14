@@ -25,6 +25,11 @@ namespace SquareDMS.DataLibrary.ProcedureResults
         }
 
         /// <summary>
+        /// Contains the id of the manipulated entity. (null if not necessary)
+        /// </summary>
+        // public int? ManipulatedId { get; set; } // for new feature: put payload into cache after insertion
+
+        /// <summary>
         /// Gets the manipulated amount of entities by the entity and the operation
         /// </summary>
         public int ManipulatedAmount(Type entity, OperationType op)

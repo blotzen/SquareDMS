@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 
 namespace SquareDMS.DataLibrary.Entities
@@ -34,5 +35,10 @@ namespace SquareDMS.DataLibrary.Entities
 
         [JsonIgnore]
         public string FilePath { get; private set; }
+
+        /// <summary>
+        /// File for multipart upload
+        /// </summary>
+        public IFormFile FormFile { get; set; }
     }
 }

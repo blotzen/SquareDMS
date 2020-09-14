@@ -51,8 +51,9 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// string. (e.g. .../fileFormats/?Description=Cool)
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<RetrievalResult<FileFormat>>> GetFileFormatsAsync([FromQuery] int? fileFormatId,
-            [FromQuery] string extension, [FromQuery] string description)
+        public async Task<ActionResult<RetrievalResult<FileFormat>>> GetFileFormatsAsync(
+            [FromQuery] int? fileFormatId = null, [FromQuery] string extension = null,
+            [FromQuery] string description = null)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 

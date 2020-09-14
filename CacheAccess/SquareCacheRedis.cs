@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -23,10 +24,10 @@ namespace SquareDMS.CacheAccess
         /// Uses server and port to connect to it,
         /// when the method is called.
         /// </summary>
-        public SquareCacheRedis(string server, int port)
+        public SquareCacheRedis(IConfiguration configuration)
         {
-            _server = server;
-            _port = port;
+            _server = configuration["RedisCache:Server"].ToString();
+            _port = int.Parse(configuration["RedisCache:Port"].ToString());
         }
 
         /// <summary>
