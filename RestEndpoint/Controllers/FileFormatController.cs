@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using RestEndpoint;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Services;
@@ -68,7 +67,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Partial Update of the given FileFormat.
         /// </summary>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchAsync(int id,
+        public async Task<ActionResult<ManipulationResult>> PatchFileFormatAsync(int id,
             [FromBody] JsonPatchDocument<FileFormat> fileFormatPatch)
         {
             if (fileFormatPatch is null)

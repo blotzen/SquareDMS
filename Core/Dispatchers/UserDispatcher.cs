@@ -31,7 +31,7 @@ namespace SquareDMS.Core.Dispatchers
         public async Task<User> CheckUserCredentialAsync(Credential userCredential)
         {
             // gets the first result in the resultset, its only one user.
-            var user = (await _squareDb.RetrieveUserByUserNameAsync(userCredential.UserName)).Resultset.ToList()[0];
+            var user = (await _squareDb.RetrieveUserByUserNameAsync(userCredential.UserName)).Resultset.FirstOrDefault();
 
             // user not found in db
             if (user is null)

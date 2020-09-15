@@ -17,14 +17,17 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         }
 
         /// <summary>
-        /// Admin gets all document versions
+        /// Admin gets all document versions.
+        /// This is not possible! If it should be
+        /// the rights for every single document version
+        /// have to checked. This is quite expensive!
         /// </summary>
         [Fact]
         public async void Admin_Get_all_DocVersions()
         {
             var retrievalResult = await _squareDbMsSql.RetrieveDocumentVersionsMetaDataAsync(1);
 
-            Assert.Equal(2, retrievalResult.Resultset.Count());
+            Assert.Equal(1, retrievalResult.ErrorCode);
         }
 
         /// <summary>

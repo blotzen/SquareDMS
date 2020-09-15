@@ -61,6 +61,9 @@ namespace SquareDMS.CacheAccess
         /// <returns>Returns null if no value has been found.</returns>
         public async Task<byte[]> RetrieveDocumentVersionPayloadAsync(int docVersionId)
         {
+            if (_redisCon is null)
+                await ConnectAsync();
+
             var redisDb = _redisCon.GetDatabase();
 
             return await redisDb.StringGetAsync(docVersionId.ToString());
@@ -71,6 +74,9 @@ namespace SquareDMS.CacheAccess
         /// </summary>
         public async Task<bool> PutDocumentPayloadAsync(int docVersionId, byte[] payload)
         {
+            if (_redisCon is null)
+                await ConnectAsync();
+
             var redisDb = _redisCon.GetDatabase();
 
             return await redisDb.StringSetAsync(docVersionId.ToString(), payload);
@@ -81,6 +87,9 @@ namespace SquareDMS.CacheAccess
         /// </summary>
         public async Task<bool> DeleteDocumentPayloadAsync(int docVersionId)
         {
+            if (_redisCon is null)
+                await ConnectAsync();
+
             var redisDb = _redisCon.GetDatabase();
 
             return await redisDb.KeyDeleteAsync(docVersionId.ToString());

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Security.Principal;
 
-namespace RestEndpoint
+namespace SquareDMS.RestEndpoint
 {
     public static class Extensions
     {

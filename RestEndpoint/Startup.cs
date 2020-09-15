@@ -1,20 +1,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using RestEndpoint.Services;
+using SquareDMS.CacheAccess;
+using SquareDMS.Core.Dispatchers;
 using SquareDMS.DatabaseAccess;
 using SquareDMS.RestEndpoint.Services;
 using System;
 using System.Text;
-using SquareDMS.Core.Dispatchers;
-using SquareDMS.CacheAccess;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace RestEndpoint
 {

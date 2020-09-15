@@ -30,7 +30,13 @@ namespace RestEndpoint.Services
             return await _documentVersionDispatcher.CreateDocumentVersionAsync(userId, documentVersion);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<RetrievalResult<DocumentVersion>> RetrieveDocumentVersionAsync(int userId, int documentVersionId)
+        {
+            return await _documentVersionDispatcher.RetrieveDocumentVersionAsync(userId, documentVersionId);
+        }
         #endregion
     }
 }

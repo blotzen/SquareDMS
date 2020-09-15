@@ -23,7 +23,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         public async void Admin_get_all_Docs()
         {
             var readResult = await _squareDbMsSql.RetrieveDocumentsAsync(1);
-            Assert.Equal(11, readResult.Resultset.Count());
+            Assert.Equal(12, readResult.Resultset.Count());
             Assert.Equal(0, readResult.ErrorCode);
         }
 
