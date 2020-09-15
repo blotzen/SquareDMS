@@ -470,12 +470,14 @@ namespace SquareDMS.DatabaseAccess
             {
                 using (var sqlFileStream = new SqlFileStream(filePath, transactionId, FileAccess.Read))
                 {
-                    var memoryStream = new MemoryStream(new byte[sqlFileStream.Length]);
-                    await sqlFileStream.CopyToAsync(memoryStream);
+                    var file = new byte[sqlFileStream.Length];
+
+                    await sqlFileStream.ReadAsync(file);
+
+                    var memoryStream = new MemoryStream(file);
 
                     return memoryStream;
                 }
-
             }
             catch (Exception ex)
             {

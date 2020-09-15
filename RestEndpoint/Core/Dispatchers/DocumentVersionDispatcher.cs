@@ -72,13 +72,13 @@ namespace SquareDMS.Core.Dispatchers
             }
 
             // await document fileformat
-            var documentFileFormatRetrievalResult = await documentFileFormatRetrieval;
+            //var documentFileFormatRetrievalResult = await documentFileFormatRetrieval;
 
-            var documentFileFormat = documentFileFormatRetrievalResult.Resultset.FirstOrDefault();
+            //var documentFileFormat = documentFileFormatRetrievalResult.Resultset.FirstOrDefault();
 
             // use file format for content type
             //retrievedDocumentVersion.FormFile.ContentType = documentFileFormat.XXXXXXXXXXXXXXX
-            retrievedDocumentVersion.DownloadFile.GenerateMediaType("application/pdf");
+            //retrievedDocumentVersion.DownloadFile.GenerateMediaType("application/pdf");
 
             return metadataRetrievalResultSet;
         }
