@@ -1,6 +1,4 @@
-﻿using SquareDMS.DatabaseAccess;
-using SquareDMS.DataLibrary.Entities;
-using System.Linq;
+﻿using System.Linq;
 using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.RightTests

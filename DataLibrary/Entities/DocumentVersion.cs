@@ -11,11 +11,10 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public DocumentVersion() { }
 
-        public DocumentVersion(int docId, int fileFormatId, byte[] fileStreamData)
+        public DocumentVersion(int docId, int fileFormatId)
         {
             DocumentId = docId;
             FileFormatId = fileFormatId;
-            FilestreamData = fileStreamData;
         }
 
         public int Id { get; private set; }
@@ -28,8 +27,6 @@ namespace SquareDMS.DataLibrary.Entities
 
         public int FileFormatId { get; set; }
 
-        public byte[] FilestreamData { get; set; }
-
         [JsonIgnore]
         public byte[] TransactionId { get; private set; }
 
@@ -37,8 +34,10 @@ namespace SquareDMS.DataLibrary.Entities
         public string FilePath { get; private set; }
 
         /// <summary>
-        /// File for multipart upload
+        /// The uploaded File
         /// </summary>
-        public IFormFile FormFile { get; set; }
+        public IFormFile UploadFile { get; set; }
+
+        public DownloadFile DownloadFile { get; set; }
     }
 }

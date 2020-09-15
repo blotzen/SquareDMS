@@ -1,7 +1,4 @@
-﻿using SquareDMS.DatabaseAccess;
-using SquareDMS.DataLibrary;
-using SquareDMS.DataLibrary.Entities;
-using System;
+﻿using System;
 using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest

@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CacheAccess\CacheAccess.csproj" />
-    <ProjectReference Include="..\DatabaseAccess\DatabaseAccess.csproj" />
   </ItemGroup>
 
 </Project>

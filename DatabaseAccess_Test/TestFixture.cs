@@ -1,5 +1,4 @@
-﻿using SquareDMS.DatabaseAccess;
-using System;
+﻿using System;
 
 namespace SquareDMS.DatabaseAccess_Tests
 {

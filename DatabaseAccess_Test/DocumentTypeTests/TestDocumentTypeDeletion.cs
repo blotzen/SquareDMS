@@ -1,5 +1,4 @@
-﻿using SquareDMS.DatabaseAccess;
-using Xunit;
+﻿using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentTypeTest
 {

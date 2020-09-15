@@ -1,5 +1,4 @@
-﻿using SquareDMS.DatabaseAccess;
-using System.Linq;
+﻿using System.Linq;
 using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentTests

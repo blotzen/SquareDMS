@@ -354,7 +354,7 @@ namespace SquareDMS.DatabaseAccess
                     // meta data insert successful
                     if (errorCode == 0)
                     {
-                        payloadWriteResult = await WriteDocumentVersionPayloadAsync(filePath, transactionContext, docVersion.FormFile);
+                        payloadWriteResult = await WriteDocumentVersionPayloadAsync(filePath, transactionContext, docVersion.UploadFile);
 
                         // payload insert successful
                         if (payloadWriteResult)
@@ -393,7 +393,7 @@ namespace SquareDMS.DatabaseAccess
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
 
             IEnumerable<DocumentVersion> documentVersions;
-            byte[] payload = null;
+            DownloadFile dlFile = null;
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -412,9 +412,12 @@ namespace SquareDMS.DatabaseAccess
                     if (errorCode == 0 && documentVersion != null)
                     {
                         // retrieve the payload and populate the documentVersion with it (null in case of error)
-                        payload = await RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
+                        var memoryStream = RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
 
-                        documentVersion.FilestreamData = payload;
+                        // creates the file from the memoryStream
+                        dlFile = new DownloadFile(await memoryStream);
+
+                        documentVersion.DownloadFile = dlFile;
                     }
 
                     transaction.Commit();   // always commit because its read only.
@@ -422,7 +425,7 @@ namespace SquareDMS.DatabaseAccess
             }
 
             // set errorCode if payload retrieve from fs failed
-            if (payload is null)
+            if (dlFile is null)
                 errorCode = 128;
 
             return new RetrievalResult<DocumentVersion>(errorCode, documentVersions);
@@ -460,18 +463,18 @@ namespace SquareDMS.DatabaseAccess
         /// Gets the payload for a given document version.
         /// </summary>
         /// <returns>In case of an IO Error, null will be returned.</returns>
-        private async Task<byte[]> RetrieveDocumentVersionPayloadAsync(string filePath, byte[] transactionId)
+        private async Task<Stream> RetrieveDocumentVersionPayloadAsync(string filePath, byte[] transactionId)
         {
             try
             {
                 using (var sqlFileStream = new SqlFileStream(filePath, transactionId, FileAccess.Read))
                 {
-                    var payload = new byte[sqlFileStream.Length];
+                    var memoryStream = new MemoryStream(new byte[sqlFileStream.Length]);
+                    await sqlFileStream.CopyToAsync(memoryStream);
 
-                    await sqlFileStream.ReadAsync(payload);
-
-                    return payload;
+                    return memoryStream;
                 }
+
             }
             catch (Exception ex)
             {

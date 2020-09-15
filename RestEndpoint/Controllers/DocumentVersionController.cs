@@ -6,6 +6,7 @@ using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RestEndpoint.Controllers
@@ -50,7 +51,7 @@ namespace RestEndpoint.Controllers
         /// Gets a DocumentVersion by its id.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<RetrievalResult<DocumentVersion>>> GetDocumentVersionAsync(int id)
+        public async Task<ActionResult> GetDocumentVersionAsync(int id)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -66,7 +67,15 @@ namespace RestEndpoint.Controllers
 
             Console.WriteLine(sw.ElapsedMilliseconds);
 
-            throw new NotImplementedException();
+            var retrievedDocumentVersion = retrievalResult.Resultset.FirstOrDefault();
+
+            if (retrievedDocumentVersion is null)
+                return null;
+
+            var streamResult = new FileStreamResult(retrievedDocumentVersion.DownloadFile.DownloadFileStream,
+                retrievedDocumentVersion.DownloadFile.MediaType);
+
+            return streamResult;
         }
     }
 }
