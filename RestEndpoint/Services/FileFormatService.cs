@@ -16,7 +16,6 @@ namespace SquareDMS.RestEndpoint.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="fileFormatDispatcher"></param>
         public FileFormatService(FileFormatDispatcher fileFormatDispatcher)
         {
             _fileFormatDispatcher = fileFormatDispatcher;

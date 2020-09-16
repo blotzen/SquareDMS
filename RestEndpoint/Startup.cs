@@ -78,6 +78,9 @@ namespace RestEndpoint
 
             services.AddScoped<DocumentService>();
             services.AddScoped<DocumentDispatcher>();
+
+            services.AddScoped<RightService>();
+            services.AddScoped<RightDispatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

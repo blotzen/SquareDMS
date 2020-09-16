@@ -8,7 +8,7 @@ using SquareDMS.RestEndpoint;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestEndpoint.Controllers
+namespace SquareDMS.RestEndpoint.Controllers
 {
     /// <summary>
     /// Handles the HTTP-Operations

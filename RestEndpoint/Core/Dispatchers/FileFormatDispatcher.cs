@@ -20,6 +20,7 @@ namespace SquareDMS.Core.Dispatchers
             _squareDb = squareDb;
         }
 
+        #region CRUD-Operations
         /// <summary>
         /// 
         /// </summary>
@@ -53,5 +54,6 @@ namespace SquareDMS.Core.Dispatchers
         {
             return await _squareDb.DeleteFileFormatAsync(userId, id);
         }
+        #endregion
     }
 }
