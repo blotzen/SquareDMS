@@ -22,7 +22,7 @@ namespace SquareDMS.DatabaseAccess
         /// <returns>Result contains an Errorcode that is 0 if the operation
         /// succeeded.</returns>
         /// <exception cref="ArgumentNullException">Doc cant be null.</exception>
-        Task<ManipulationResult> CreateDocumentAsync(Document doc);
+        Task<ManipulationResult> CreateDocumentAsync(int userId, Document doc);
 
         /// <summary>
         /// Gets a document or multiple documents, depending on the given paramters.

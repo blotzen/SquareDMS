@@ -24,4 +24,8 @@
     <Folder Include="RightTests\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RestEndpoint\SquareDMS.csproj" />
+  </ItemGroup>
+
 </Project>

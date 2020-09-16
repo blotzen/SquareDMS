@@ -1,4 +1,8 @@
-﻿using Xunit;
+﻿using SquareDMS.DatabaseAccess;
+using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
+using System.Linq;
+using Xunit;
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentTypeTest
 {

@@ -1,5 +1,9 @@
-﻿using System.Linq;
+﻿using SquareDMS.DatabaseAccess;
+using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
+using System.Linq;
 using Xunit;
+
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
 {
@@ -38,7 +42,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
             var retrievalResult = await _squareDbMsSql.RetrieveDocumentVersionsMetaDataAsync(1, 2);
 
             Assert.Single(retrievalResult.Resultset);
-            Assert.Null(retrievalResult.Resultset.ToList()[0].FilestreamData);
+            Assert.Null(retrievalResult.Resultset.ToList()[0].DownloadFile);
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
             var retrievalResult = await _squareDbMsSql.RetrieveDocumentVersionAsync(1, 2);
 
             Assert.Single(retrievalResult.Resultset);
-            Assert.Equal(128, retrievalResult.Resultset.ToList()[0].FilestreamData.Length);
+            Assert.Equal(128, retrievalResult.Resultset.ToList()[0].DownloadFile?.FileStream.Length);
         }
     }
 }

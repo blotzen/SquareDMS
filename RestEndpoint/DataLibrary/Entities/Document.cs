@@ -9,10 +9,8 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public Document() { }
 
-        public Document(int creator, int docType,
-            string name, bool locked = false, bool discard = false)
+        public Document(int docType, string name, bool locked = false, bool discard = false)
         {
-            Creator = creator;
             DocumentType = docType;
             Name = name;
             Locked = locked;
@@ -23,13 +21,13 @@ namespace SquareDMS.DataLibrary.Entities
 
         public int Creator { get; set; }
 
-        public int DocumentType { get; set; }
+        public int? DocumentType { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Name { get; set; }
 
-        public bool Locked { get; set; }
+        public bool? Locked { get; set; }
 
-        public bool Discard { get; set; }
+        public bool? Discard { get; set; }
     }
 }

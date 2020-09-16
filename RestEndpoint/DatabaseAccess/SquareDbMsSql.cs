@@ -51,14 +51,14 @@ namespace SquareDMS.DatabaseAccess
         /// <returns>Result contains an Errorcode that is 0 if the operation
         /// succeeded.</returns>
         /// <exception cref="ArgumentNullException">Doc cant be null.</exception>
-        public async Task<ManipulationResult> CreateDocumentAsync(Document doc)
+        public async Task<ManipulationResult> CreateDocumentAsync(int userId, Document doc)
         {
             if (doc is null)
                 throw new ArgumentNullException("doc", "Cant create null document.");
 
             DynamicParameters parameters = new DynamicParameters();
 
-            parameters.Add("@userId", doc.Creator, DbType.Int32, direction: ParameterDirection.Input);
+            parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@docType", doc.DocumentType, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@locked", doc.Locked, DbType.Boolean, direction: ParameterDirection.Input);
             parameters.Add("@discard", doc.Discard, DbType.Boolean, direction: ParameterDirection.Input);
@@ -91,7 +91,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
 
-            parameters.Add("@maxAccessLevel", maxAccessLevel ?? (object)DBNull.Value, DbType.Int32, direction: ParameterDirection.Input);
+            parameters.Add("@maxAccessLevel", maxAccessLevel, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@docId", docId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@creatorId", creator, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@docTypeId", docType, DbType.Int32, direction: ParameterDirection.Input);

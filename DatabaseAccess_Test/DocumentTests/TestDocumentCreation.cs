@@ -1,4 +1,9 @@
+using SquareDMS.DatabaseAccess;
+using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
+using System.Linq;
 using Xunit;
+
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
 {
@@ -20,8 +25,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void Admin_ValidName_ValidDocType_Async()
         {
-            var doc_valid = new Document(1, 1, "Integrationstest_Dokument_1");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_valid);
+            var doc_valid = new Document(1, "Integrationstest_Dokument_1");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(1, doc_valid);
 
             Assert.Equal(0, creationResult.ErrorCode);
         }
@@ -32,8 +37,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void Creator_ValidName_ValidDocType_Async()
         {
-            var doc_valid = new Document(2, 1, "Integrationstest_Dokument_2");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_valid);
+            var doc_valid = new Document(1, "Integrationstest_Dokument_2");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(2, doc_valid);
 
             Assert.Equal(0, creationResult.ErrorCode);
         }
@@ -44,8 +49,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void Creator_InvalidNameNull_ValidDocType_Async()
         {
-            var doc_name_null = new Document(1, 1, null);
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_name_null);
+            var doc_name_null = new Document(1, null);
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(1, doc_name_null);
 
             Assert.Equal(120, creationResult.ErrorCode);
         }
@@ -56,8 +61,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void Creator_InvalidNameEmpty_ValidDocType_Async()
         {
-            var doc_name_empty = new Document(1, 1, "");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_name_empty);
+            var doc_name_empty = new Document(1, "");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(1, doc_name_empty);
 
             Assert.Equal(120, creationResult.ErrorCode);
         }
@@ -68,8 +73,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void UserNotExist_ValidName_ValidDocType_Async()
         {
-            var doc_invalid_user = new Document(123, 1, "Integrationstest_Dokument_3");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_invalid_user);
+            var doc_invalid_user = new Document(1, "Integrationstest_Dokument_3");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(123, doc_invalid_user);
 
             Assert.Equal(14, creationResult.ErrorCode);
         }
@@ -80,8 +85,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void UserNotCreatorAndNotAdmin_ValidName_ValidDocType_Async()
         {
-            var doc_invalid_user = new Document(10, 1, "Integrationstest_Dokument_4");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_invalid_user);
+            var doc_invalid_user = new Document(1, "Integrationstest_Dokument_4");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(10, doc_invalid_user);
 
             Assert.Equal(14, creationResult.ErrorCode);
         }
@@ -92,8 +97,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentTests
         [Fact]
         public async void Creator_ValidName_InvalidDocType_Async()
         {
-            var doc_invalid_user = new Document(1, 1023, "Integrationstest_Dokument_5");
-            var creationResult = await _squareDbMsSql.CreateDocumentAsync(doc_invalid_user);
+            var doc_invalid_user = new Document(1023, "Integrationstest_Dokument_5");
+            var creationResult = await _squareDbMsSql.CreateDocumentAsync(1, doc_invalid_user);
 
             Assert.Equal(110, creationResult.ErrorCode);
         }

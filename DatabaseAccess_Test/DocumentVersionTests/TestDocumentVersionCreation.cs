@@ -1,5 +1,10 @@
-﻿using System;
+﻿using SquareDMS.DatabaseAccess;
+using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
+using System;
+using System.Linq;
 using Xunit;
+
 
 namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
 {
@@ -22,7 +27,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         public async void Admin_Create_Valid_DocVersion()
         {
             var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
-            var docVer = new DocumentVersion(1, 1, file);
+            var docVer = new DocumentVersion(1, 1);
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -37,7 +42,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         public async void User_noPermissions_Create_Valid_DocVersion()
         {
             var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
-            var docVer = new DocumentVersion(1, 1, file);
+            var docVer = new DocumentVersion(1, 1);
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(10, docVer);
 
@@ -52,7 +57,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         public async void Admin_Create_DocVersion_invalidDocId()
         {
             var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
-            var docVer = new DocumentVersion(99, 1, file);
+            var docVer = new DocumentVersion(99, 1);
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -67,7 +72,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         public async void Admin_Create_DocVersion_invalidFileFormat()
         {
             var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
-            var docVer = new DocumentVersion(1, 99, file);
+            var docVer = new DocumentVersion(1, 99);
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -82,7 +87,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         public async void Admin_Create_DocVersion_NullFile()
         {
             byte[] file = null;
-            var docVer = new DocumentVersion(1, 1, file);
+            var docVer = new DocumentVersion(1, 1);
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 

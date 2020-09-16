@@ -12,6 +12,7 @@ using SquareDMS.CacheAccess;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DatabaseAccess;
 using SquareDMS.RestEndpoint.Services;
+using SquareDMS.Services;
 using System;
 using System.Text;
 
@@ -74,6 +75,9 @@ namespace RestEndpoint
 
             services.AddScoped<DocumentVersionService>();
             services.AddScoped<DocumentVersionDispatcher>();
+
+            services.AddScoped<DocumentService>();
+            services.AddScoped<DocumentDispatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

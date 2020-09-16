@@ -16,7 +16,7 @@ namespace SquareDMS.Core.Dispatchers
         private readonly ISquareDb _squareDb;
 
         /// <summary>
-        /// Constructor needs connection string to db.
+        /// 
         /// </summary>
         public UserDispatcher(ISquareDb squareDb)
         {
@@ -46,6 +46,7 @@ namespace SquareDMS.Core.Dispatchers
             return user;
         }
 
+        #region CRUD-Operationen
         /// <summary>
         /// Creates a new user in the database or returns an errorcode if this
         /// operation faulty.
@@ -86,6 +87,6 @@ namespace SquareDMS.Core.Dispatchers
         {
             return await _squareDb.DeleteUserAsync(id, deleteUserId);
         }
-
+        #endregion
     }
 }

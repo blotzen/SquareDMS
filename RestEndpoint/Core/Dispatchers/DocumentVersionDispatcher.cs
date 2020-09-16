@@ -33,9 +33,18 @@ namespace SquareDMS.Core.Dispatchers
         }
 
         /// <summary>
-        /// Gets a document version by its id, fetches the payload from the cache or from the filestream
+        /// Gets a document version by its id or its document id. Only returns the metadata.
         /// </summary>
-        public async Task<RetrievalResult<DocumentVersion>> RetrieveDocumentVersionAsync(int userId, int documentVersionId)
+        public async Task<RetrievalResult<DocumentVersion>> RetrieveDocumentVersionMetadataAsync(int userId, int? documentVersionId,
+            int? documentId)
+        {
+            return await _squareDb.RetrieveDocumentVersionsMetaDataAsync(userId, documentVersionId, documentId);
+        }
+
+        /// <summary>
+        /// Gets a document version by its id, fetches the payload from the cache or from the filestream.
+        /// </summary>
+        public async Task<RetrievalResult<DocumentVersion>> RetrieveDocumentVersionPayloadAsync(int userId, int documentVersionId)
         {
             var metadataRetrievalResultSet = await _squareDb.RetrieveDocumentVersionsMetaDataAsync(userId, documentVersionId);
 
