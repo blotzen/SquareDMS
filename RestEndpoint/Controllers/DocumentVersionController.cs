@@ -5,8 +5,6 @@ using RestEndpoint.Services;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint;
-using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
