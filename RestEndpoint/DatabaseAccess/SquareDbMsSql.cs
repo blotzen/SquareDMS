@@ -413,10 +413,10 @@ namespace SquareDMS.DatabaseAccess
                     if (errorCode == 0 && documentVersion != null)
                     {
                         // retrieve the payload and populate the documentVersion with it (null in case of error)
-                        var memoryStream = RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
+                        var memoryStream = await RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
 
                         // creates the file from the memoryStream
-                        dlFile = new FileStreamResult(await memoryStream, "application/octet-stream");
+                        dlFile = new FileStreamResult(memoryStream, "application/octet-stream");
 
                         documentVersion.DownloadFile = dlFile;
                     }
