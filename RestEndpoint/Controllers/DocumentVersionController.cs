@@ -47,18 +47,36 @@ namespace RestEndpoint.Controllers
         }
 
         /// <summary>
-        /// Gets a DocumentVersion by its id. Returns an empty result if the
+        /// Gets a DocumentVersions payload by its id. Returns an empty result if the
+        /// document version wasnt found. (e.g. documentversions/?documentId=12&documentVersionId=3)
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult> GetDocumentVersionMetadataAsync(int id,
+            [FromQuery] int? documentVersionId, [FromQuery] int? documentId)
+        {
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
+
+            // bad request if no userId was found, or both params are null
+            if (userIdClaimed is null || (documentVersionId is null && documentId is null))
+                return BadRequest();
+
+            return Ok(await _documentVersionService.RetrieveDocumentVersionMetadataAsync(userIdClaimed.Value,
+                documentVersionId, documentId));
+        }
+
+        /// <summary>
+        /// Gets a DocumentVersions payload by its id. Returns an empty result if the
         /// document version wasnt found.
         /// </summary>
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetDocumentVersionAsync(int id)
+        [HttpGet("{id}/payload")]
+        public async Task<ActionResult> GetDocumentVersionPayloadAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            var retrievalResult = await _documentVersionService.RetrieveDocumentVersionAsync(userIdClaimed.Value, id);
+            var retrievalResult = await _documentVersionService.RetrieveDocumentVersionPayloadAsync(userIdClaimed.Value, id);
             var retrievedDocumentVersion = retrievalResult.Resultset.FirstOrDefault();
 
             if (retrievedDocumentVersion is null)
