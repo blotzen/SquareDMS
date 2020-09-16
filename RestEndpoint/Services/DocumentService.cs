@@ -1,9 +1,6 @@
 ﻿using SquareDMS.Core.Dispatchers;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SquareDMS.Services
@@ -49,6 +46,14 @@ namespace SquareDMS.Services
         public async Task<ManipulationResult> UpdateDocumentAsync(int userId, int id, Document patchedDocument)
         {
             return await _documentDispatcher.UpdateDocumentAsync(userId, id, patchedDocument);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<ManipulationResult> DeleteDocumentAsync(int userId, int id)
+        {
+            return await _documentDispatcher.DeleteDocumentAsync(userId, id);
         }
         #endregion
     }

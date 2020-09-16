@@ -1,9 +1,6 @@
 ﻿using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SquareDMS.Core.Dispatchers
@@ -35,7 +32,7 @@ namespace SquareDMS.Core.Dispatchers
         public async Task<RetrievalResult<Document>> RetrieveDocumentAsync(int userId,
             int? docId, int? creator, int? docType, string name, bool? locked, bool? dicard)
         {
-            return await _squareDb.RetrieveDocumentsAsync(userId: userId, docId: docId, creator: creator, 
+            return await _squareDb.RetrieveDocumentsAsync(userId: userId, docId: docId, creator: creator,
                 docType: docType, name: name, locked: locked, discard: dicard);
         }
 
@@ -46,6 +43,14 @@ namespace SquareDMS.Core.Dispatchers
         {
             return await _squareDb.UpdateDocumentAsync(userId, id, patchedDocument.DocumentType, patchedDocument.Name,
                 patchedDocument.Locked, patchedDocument.Discard);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public async Task<ManipulationResult> DeleteDocumentAsync(int userId, int id)
+        {
+            return await _squareDb.DeleteDocumentAsync(userId, id);
         }
         #endregion
     }

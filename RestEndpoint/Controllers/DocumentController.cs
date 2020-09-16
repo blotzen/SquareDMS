@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint;
-using SquareDMS.RestEndpoint.Services;
 using SquareDMS.Services;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace SquareDMS.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Creates a new Document.
         /// </summary>
         [HttpPost]
         public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] Document document)
@@ -46,10 +45,10 @@ namespace SquareDMS.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Retrieves documents depending on the given paramters.
         /// </summary>
         public async Task<ActionResult<RetrievalResult<Document>>> GetDocumentAsync([FromQuery] int? documentId,
-            [FromQuery] int? creator, [FromQuery] int? docType, [FromQuery] string name, 
+            [FromQuery] int? creator, [FromQuery] int? docType, [FromQuery] string name,
             [FromQuery] bool? locked, [FromQuery] bool? dicard)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
@@ -90,6 +89,18 @@ namespace SquareDMS.Controllers
             return Ok(await _documentService.UpdateDocumentAsync(userIdClaimed.Value, id, patchedDocument));
         }
 
+        /// <summary>
+        /// Delets a document.
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ManipulationResult>> DeleteDocumentAsync(int id)
+        {
+            var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
+            if (userIdClaimed is null)
+                return BadRequest();
+
+            return Ok(await _documentService.DeleteDocumentAsync(userIdClaimed.Value, id));
+        }
     }
 }
