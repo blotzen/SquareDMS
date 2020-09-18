@@ -10,35 +10,35 @@ namespace SquareDMS.RestEndpoint.Controllers
 {
     /// <summary>
     /// Handles the HTTP-Operations 
-    /// for the Ressource DocumentType.
+    /// for the Ressource Group.
     /// </summary>
     [Authorize]
-    [Route("api/DocumentTypes")]
+    [Route("api/groups")]
     [ApiController]
-    public class DocumentTypeController : ControllerBase
+    public class GroupController : ControllerBase
     {
-        private readonly DocumentTypeService _documentTypeService;
+        private readonly GroupService _groupService;
 
         /// <summary>
-        /// Receives the DocumentTypeService via DI.
+        /// Receives the GroupService via DI.
         /// </summary>
-        public DocumentTypeController(DocumentTypeService documentTypeService)
+        public GroupController(GroupService groupService)
         {
-            _documentTypeService = documentTypeService;
+            _groupService = groupService;
         }
 
         /// <summary>
-        /// Creates a new DocumentType.
+        /// Creates a new Group.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] DocumentType documentType)
+        public async Task<ActionResult<ManipulationResult>> PostGroupAsync([FromBody] Group group)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            var postResult = await _documentTypeService.CreateDocumentTypeAsync(userIdClaimed.Value, documentType);
+            var postResult = await _groupService.CreateGroupAsync(userIdClaimed.Value, group);
 
             return Ok(postResult);
         }
@@ -47,29 +47,29 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// 
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<RetrievalResult<DocumentType>>> GetDocumentTypesAsync([FromQuery] int? docTypeId,
-            [FromQuery] string name, [FromQuery] string description)
+        public async Task<ActionResult<RetrievalResult<Group>>> GetGroupAsync([FromQuery] int? groupId,
+            [FromQuery] string name, [FromQuery] string description, [FromQuery] bool? admin, [FromQuery] bool? creator)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            var retrievalResult = await _documentTypeService.RetrieveDocumentTypeAsync(userIdClaimed.Value, docTypeId,
-                name, description);
+            var retrievalResult = await _groupService.RetrieveGroupAsync(userIdClaimed.Value, groupId, name, description,
+                admin, creator);
 
             return Ok(retrievalResult);
         }
 
+
         /// <summary>
-        /// 
+        /// Partial Update of the given Group.
         /// </summary>
-        /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchDocumentTypeAsync(int id,
-            [FromBody] JsonPatchDocument<DocumentType> documentTypePatch)
+        public async Task<ActionResult<ManipulationResult>> PatchGroupAsync(int id,
+            [FromBody] JsonPatchDocument<Group> groupPatch)
         {
-            if (documentTypePatch is null)
+            if (groupPatch is null)
                 return BadRequest();
 
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
@@ -78,15 +78,15 @@ namespace SquareDMS.RestEndpoint.Controllers
                 return BadRequest();
 
             // create empty document ..
-            var patchedDocumentType = new DocumentType();
+            var patchedGroup = new Group();
 
             // .. and apply patch on it
-            documentTypePatch.ApplyTo(patchedDocumentType);
+            groupPatch.ApplyTo(patchedGroup);
 
-            if (!TryValidateModel(patchedDocumentType))
+            if (!TryValidateModel(patchedGroup))
                 return BadRequest("Patch syntax invalid");
 
-            var patchResult = await _documentTypeService.UpdateDocumentTypeAsync(userIdClaimed.Value, id, patchedDocumentType);
+            var patchResult = await _groupService.UpdateGroupAsync(userIdClaimed.Value, id, patchedGroup);
 
             if (patchResult is null)
                 return BadRequest("Tried to update non updateable attributes");
@@ -98,14 +98,14 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// 
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteDocumentTypeAsync(int id)
+        public async Task<ActionResult<ManipulationResult>> DeleteGroupAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            return Ok(await _documentTypeService.DeleteDocumentTypeAsync(userIdClaimed.Value, id));
+            return Ok(await _groupService.DeleteGroupAsync(userIdClaimed.Value, id));
         }
     }
 }
