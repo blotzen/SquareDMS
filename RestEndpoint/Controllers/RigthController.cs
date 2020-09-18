@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SquareDMS.DataLibrary.Entities;
@@ -106,8 +107,15 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (groupId is null || documentId is null)
                 return BadRequest("groupId and docId have to be specified");
 
-            return Ok(await _rightService.DeleteRightAsync(userIdClaimed.Value, 
-                groupId.Value, documentId.Value));
+            var deleteResult = await _rightService.DeleteRightAsync(userIdClaimed.Value,
+                groupId.Value, documentId.Value);
+
+            if (deleteResult.ErrorCode == 10)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, deleteResult);
+            }
+
+            return Ok();
         }
     }
 }
