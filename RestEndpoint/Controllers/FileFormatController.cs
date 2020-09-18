@@ -87,7 +87,12 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (!TryValidateModel(patchedFileFormat))
                 return BadRequest("Patch syntax invalid");
 
-            return Ok(await _fileFormatService.UpdateFileFormatAsync(userIdClaimed.Value, id, patchedFileFormat));
+            var patchResult = await _fileFormatService.UpdateFileFormatAsync(userIdClaimed.Value, id, patchedFileFormat);
+
+            if (patchResult is null)
+                return BadRequest("Tried to update non updateable attributes");
+
+            return Ok(patchResult);
         }
 
         /// <summary>

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using RestEndpoint.Services;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using SquareDMS.RestEndpoint;
 using System.Linq;
 using System.Threading.Tasks;
 

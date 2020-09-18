@@ -24,9 +24,9 @@
             AccessLevel = accessLevel;
         }
 
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
-        public int DocumentId { get; set; }
+        public int? DocumentId { get; set; }
 
         public AccessLevel AccessLevel { get; set; }
     }

@@ -1,9 +1,6 @@
 ﻿using SquareDMS.Core.Dispatchers;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SquareDMS.Services
@@ -40,10 +37,16 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId, 
+        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId,
             Right patchedRight)
         {
-            return await _rightDispatcher.UpdateRightAsync(userId, groupId, docId, patchedRight);
+            // checks if the patch is applied only to editable attributes
+            if (patchedRight.DocumentId is null && patchedRight.GroupId is null)
+            {
+                return await _rightDispatcher.UpdateRightAsync(userId, groupId, docId, patchedRight);
+            }
+
+            return null;
         }
 
         /// <summary>

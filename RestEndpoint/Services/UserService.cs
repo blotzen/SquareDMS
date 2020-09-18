@@ -49,7 +49,7 @@ namespace SquareDMS.RestEndpoint.Services
             if (user is null || !user.Active.GetValueOrDefault())
                 return null;
 
-            var jwt = GenerateJwt(user.Id);
+            var jwt = GenerateJwt(user.Id.Value);
 
             return new Authentication.Response(user, jwt);
         }
@@ -106,11 +106,22 @@ namespace SquareDMS.RestEndpoint.Services
         }
 
         /// <summary>
-        /// Update a user.
+        /// Update a user. Returns null if non updateable attributes 
+        /// are non null.
         /// </summary>
-        public async Task<ManipulationResult> UpdateUserAsync(int id, User patchedUser)
+        /// <param name="id">id of the user patching</param>
+        /// <param name="patchUserId">id of the user to patch</param>
+        /// <param name="patchedUser">patched user informations</param>
+        /// <returns></returns>
+        public async Task<ManipulationResult> UpdateUserAsync(int id, int patchUserId, User patchedUser)
         {
-            return await _userDispatcher.UpdateUserAsync(id, patchedUser.Id, patchedUser);
+            // username cant be patched (changed)
+            if (patchedUser.Id is null && patchedUser.UserName is null)
+            {
+                return await _userDispatcher.UpdateUserAsync(id, patchUserId, patchedUser);
+            }
+
+            return null;
         }
 
         /// <summary>

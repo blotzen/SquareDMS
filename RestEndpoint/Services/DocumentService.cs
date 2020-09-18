@@ -45,7 +45,13 @@ namespace SquareDMS.Services
         /// </summary>
         public async Task<ManipulationResult> UpdateDocumentAsync(int userId, int id, Document patchedDocument)
         {
-            return await _documentDispatcher.UpdateDocumentAsync(userId, id, patchedDocument);
+            // id and creator cant be changed
+            if (patchedDocument.Id is null && patchedDocument.Creator is null)
+            {
+                return await _documentDispatcher.UpdateDocumentAsync(userId, id, patchedDocument);
+            }
+
+            return null;
         }
 
         /// <summary>

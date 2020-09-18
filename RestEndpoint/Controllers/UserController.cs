@@ -116,7 +116,12 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (!TryValidateModel(patchedUser))
                 return BadRequest("Patch syntax invalid");
 
-            return Ok(await _userService.UpdateUserAsync(userIdClaimed.Value, patchedUser));
+            var patchResult = await _userService.UpdateUserAsync(userIdClaimed.Value, id, patchedUser);
+
+            if (patchResult is null)
+                return BadRequest("Tried to update non updateable attributes");
+
+            return Ok(patchResult);
         }
 
         /// <summary>

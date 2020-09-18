@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using SquareDMS.RestEndpoint;
-using SquareDMS.RestEndpoint.Services;
 using SquareDMS.Services;
 using System.Threading.Tasks;
 
@@ -18,14 +16,14 @@ namespace SquareDMS.RestEndpoint.Controllers
     [Authorize]
     [Route("api/v1/rights")]
     [ApiController]
-    public class RigthController : ControllerBase
+    public class RightController : ControllerBase
     {
         private readonly RightService _rightService;
 
         /// <summary>
         /// Receives the RightService via DI.
         /// </summary>
-        public RigthController(RightService rightService)
+        public RightController(RightService rightService)
         {
             _rightService = rightService;
         }
@@ -65,7 +63,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Update the access level of a ressource
         /// </summary>
         [HttpPatch]
-        public async Task<ActionResult<ManipulationResult>> PatchRightAsync(int id, [FromQuery] int? groupId,
+        public async Task<ActionResult<ManipulationResult>> PatchRightAsync([FromQuery] int? groupId,
             [FromQuery] int? documentId, [FromBody] JsonPatchDocument<Right> rightPatch)
         {
             if (rightPatch is null)
@@ -88,8 +86,14 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (!TryValidateModel(patchedRight))
                 return BadRequest("Patch syntax invalid");
 
-            return Ok(await _rightService.UpdateRightAsync(userIdClaimed.Value, groupId.Value, 
-                documentId.Value, patchedRight));
+            var patchResult = await _rightService.UpdateRightAsync(userIdClaimed.Value, groupId.Value,
+                documentId.Value, patchedRight);
+
+            // tried to update a non updateable attribute
+            if (patchResult is null)
+                return BadRequest("Tried to update non updateable attributes");
+
+            return Ok(patchResult);
         }
 
         /// <summary>

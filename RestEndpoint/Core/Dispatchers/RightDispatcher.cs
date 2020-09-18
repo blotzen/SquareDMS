@@ -37,7 +37,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId, 
+        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId,
             Right patchedRight)
         {
             return await _squareDb.UpdateRightAsync(userId, groupId, docId, patchedRight.AccessLevel);

@@ -4,72 +4,73 @@ using Microsoft.AspNetCore.Mvc;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.Services;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace SquareDMS.RestEndpoint.Controllers
 {
     /// <summary>
     /// Handles the HTTP-Operations 
-    /// for the Ressource Document.
+    /// for the Ressource DocumentType.
     /// </summary>
     [Authorize]
-    [Route("api/v1/documents")]
+    [Route("api/DocumentTypes")]
     [ApiController]
-    public class DocumentController : ControllerBase
+    public class DocumentTypeController : ControllerBase
     {
-        private readonly DocumentService _documentService;
+        private readonly DocumentTypeService _documentTypeService;
 
         /// <summary>
-        /// Receives the DocumentService via DI.
+        /// Receives the DocumentTypeService via DI.
         /// </summary>
-        public DocumentController(DocumentService documentService)
+        public DocumentTypeController(DocumentTypeService documentTypeService)
         {
-            _documentService = documentService;
+            _documentTypeService = documentTypeService;
         }
 
         /// <summary>
-        /// Creates a new Document.
+        /// Creates a new DocumentType.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] Document document)
+        public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] DocumentType documentType)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            var postResult = await _documentService.CreateDocumentAsync(userIdClaimed.Value, document);
+            var postResult = await _documentTypeService.CreateDocumentTypeAsync(userIdClaimed.Value, documentType);
 
             return Ok(postResult);
         }
 
         /// <summary>
-        /// Retrieves documents depending on the given paramters.
+        /// 
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<RetrievalResult<Document>>> GetDocumentsAsync([FromQuery] int? documentId,
-            [FromQuery] int? creator, [FromQuery] int? docType, [FromQuery] string name,
-            [FromQuery] bool? locked, [FromQuery] bool? dicard)
+        public async Task<ActionResult<RetrievalResult<DocumentType>>> GetDocumentTypesAsync([FromQuery] int? docTypeId,
+            [FromQuery] string name, [FromQuery] string description)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            var retrievalResult = await _documentService.RetrieveDocumentAsync(userIdClaimed.Value, documentId,
-                creator, docType, name, locked, dicard);
+            var retrievalResult = await _documentTypeService.RetrieveDocumentTypeAsync(userIdClaimed.Value, docTypeId,
+                name, description);
 
             return Ok(retrievalResult);
         }
 
         /// <summary>
-        /// Partial Update of the given Document.
+        /// 
         /// </summary>
+        /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchDocumentAsync(int id,
-            [FromBody] JsonPatchDocument<Document> documentPatch)
+        public async Task<ActionResult<ManipulationResult>> PatchDocumentTypeAsync(int id,
+            [FromBody] JsonPatchDocument<DocumentType> documentTypePatch)
         {
-            if (documentPatch is null)
+            if (documentTypePatch is null)
                 return BadRequest();
 
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
@@ -78,15 +79,15 @@ namespace SquareDMS.RestEndpoint.Controllers
                 return BadRequest();
 
             // create empty document ..
-            var patchedDocument = new Document();
+            var patchedDocumentType = new DocumentType();
 
             // .. and apply patch on it
-            documentPatch.ApplyTo(patchedDocument);
+            documentTypePatch.ApplyTo(patchedDocumentType);
 
-            if (!TryValidateModel(patchedDocument))
+            if (!TryValidateModel(patchedDocumentType))
                 return BadRequest("Patch syntax invalid");
 
-            var patchResult = await _documentService.UpdateDocumentAsync(userIdClaimed.Value, id, patchedDocument);
+            var patchResult = await _documentTypeService.UpdateDocumentTypeAsync(userIdClaimed.Value, id, patchedDocumentType);
 
             if (patchResult is null)
                 return BadRequest("Tried to update non updateable attributes");
@@ -95,17 +96,17 @@ namespace SquareDMS.RestEndpoint.Controllers
         }
 
         /// <summary>
-        /// Delets a document.
+        /// 
         /// </summary>
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteDocumentAsync(int id)
+        [HttpDelete]
+        public async Task<ActionResult<ManipulationResult>> DeleteDocumentTypeAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
                 return BadRequest();
 
-            return Ok(await _documentService.DeleteDocumentAsync(userIdClaimed.Value, id));
+            return Ok(await _documentTypeService.DeleteDocumentTypeAsync(userIdClaimed.Value, id));
         }
     }
 }

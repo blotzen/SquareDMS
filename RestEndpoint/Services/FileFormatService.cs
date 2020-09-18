@@ -46,7 +46,13 @@ namespace SquareDMS.RestEndpoint.Services
         public async Task<ManipulationResult> UpdateFileFormatAsync(int userId, int id,
             FileFormat patchedFileFormat)
         {
-            return await _fileFormatDispatcher.UpdateFileFormatAsync(userId, id, patchedFileFormat);
+            // id cant be changed.
+            if (patchedFileFormat.Id is null)
+            {
+                return await _fileFormatDispatcher.UpdateFileFormatAsync(userId, id, patchedFileFormat);
+            }
+
+            return null;
         }
 
         /// <summary>
