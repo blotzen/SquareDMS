@@ -1,4 +1,5 @@
-﻿using SquareDMS.CacheAccess;
+﻿using NLog;
+using SquareDMS.CacheAccess;
 using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
@@ -14,6 +15,7 @@ namespace SquareDMS.Core.Dispatchers
     {
         private readonly ISquareDb _squareDb;
         private readonly ISquareCache _squareCache;
+        private readonly Logger _logger;
 
         /// <summary>
         /// 
@@ -22,6 +24,7 @@ namespace SquareDMS.Core.Dispatchers
         {
             _squareDb = squareDb;
             _squareCache = squareCache;
+            _logger = LogManager.GetLogger("DocumentVersionDispatcher");
         }
 
         /// <summary>

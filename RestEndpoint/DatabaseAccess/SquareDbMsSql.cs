@@ -59,6 +59,8 @@ namespace SquareDMS.DatabaseAccess
             if (doc is null)
                 throw new ArgumentNullException("doc", "Cant create null document.");
 
+            _logger.Debug("User: {0} creates new Document in the Database", userId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -79,6 +81,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var createdDocuments = parameters.Get<int>("createdDocuments");
 
+            _logger.Debug("User: {0} created new Document in the Database", userId);
+
             return new ManipulationResult(errorCode, new Operation(typeof(Document), createdDocuments, OperationType.Create));
         }
 
@@ -90,6 +94,8 @@ namespace SquareDMS.DatabaseAccess
             [Optional] int? docId, [Optional] int? creator, [Optional] int? docType,
             [Optional] string name, [Optional] bool? locked, [Optional] bool? discard)
         {
+            _logger.Debug("User: {0} retrieves Documents from the Database", userId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -112,6 +118,8 @@ namespace SquareDMS.DatabaseAccess
                     commandType: CommandType.StoredProcedure);
             }
 
+            _logger.Debug("User: {0} retrieved Documents from the Database", userId);
+
             return new RetrievalResult<Document>(parameters.Get<int>("errorCode"), documents);
         }
 
@@ -122,6 +130,8 @@ namespace SquareDMS.DatabaseAccess
         public async Task<ManipulationResult> UpdateDocumentAsync(int userId, int docId, [Optional] int? docType,
             [Optional] string name, [Optional] bool? locked, [Optional] bool? discard)
         {
+            _logger.Debug("User: {0} updates a Document (DocId: {1}) in the Database", userId, docId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -143,6 +153,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var updatedDocuments = parameters.Get<int>("updatedDocuments");
 
+            _logger.Debug("User: {0} updated a Document (DocId: {1}) in the Database", userId, docId);
+
             return new ManipulationResult(errorCode, new Operation(typeof(Document), updatedDocuments, OperationType.Update));
         }
 
@@ -159,6 +171,8 @@ namespace SquareDMS.DatabaseAccess
         /// succeeded.</returns>
         public async Task<ManipulationResult> DeleteDocumentAsync(int userId, int docId)
         {
+            _logger.Debug("User: {0} deletes a Document (DocId: {1}) in the Database", userId, docId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -179,6 +193,8 @@ namespace SquareDMS.DatabaseAccess
             var deletedRights = parameters.Get<int>("deletedRights");
             var deletedDocVersions = parameters.Get<int>("deletedDocVersions");
             var deletedDocuments = parameters.Get<int>("deletedDocuments");
+
+            _logger.Debug("User: {0} deleted a Document (DocId: {1}) in the Database", userId, docId);
 
             return new ManipulationResult(errorCode, new Operation(typeof(Right), deletedRights, OperationType.Delete),
                 new Operation(typeof(DocumentVersion), deletedDocVersions, OperationType.Delete),
@@ -1018,10 +1034,10 @@ namespace SquareDMS.DatabaseAccess
             [Optional] string lastName, [Optional] string firstName, [Optional] string userName,
             [Optional] string email, [Optional] bool? active)
         {
-            DynamicParameters parameters = new DynamicParameters();
-
             _logger.Debug("User: {0} retrieves Users from the Database", userId);
 
+            DynamicParameters parameters = new DynamicParameters();
+          
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@retrieveUserId", retrieveUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);
@@ -1042,6 +1058,8 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
 
+            _logger.Debug("Users retrieved from Database; ErrorCode: {0}", errorCode);
+
             return new RetrievalResult<User>(errorCode, users);
         }
 
@@ -1058,7 +1076,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
 
-            _logger.Debug("Retrieve User by UserName: {0}", userName);
+            _logger.Debug("Retrieve User from Database by UserName: {0}", userName);
 
             IEnumerable<User> users;
 
@@ -1070,7 +1088,7 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
 
-            _logger.Debug("Retrieved User by UserName: {0}; ErrorCode: {1}", userName, errorCode);
+            _logger.Debug("User retrieved from Database by UserName: {0}; ErrorCode: {1}", userName, errorCode);
 
             return new RetrievalResult<User>(errorCode, users);
         }
@@ -1083,10 +1101,10 @@ namespace SquareDMS.DatabaseAccess
             [Optional] string firstName, [Optional] string userName, [Optional] string email,
             [Optional] byte[] passwordHash, [Optional] bool? active)
         {
-            DynamicParameters parameters = new DynamicParameters();
-
             _logger.Debug("User {0} updates User with UserId: {0}", userId, updateUserId);
 
+            DynamicParameters parameters = new DynamicParameters();
+            
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@updateUserId", updateUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);
@@ -1108,7 +1126,7 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var updatedUsers = parameters.Get<int>("updatedUsers");
 
-            _logger.Debug("User updated: {0}; ErrorCode: {0}", errorCode);
+            _logger.Debug("User updated; ErrorCode: {0}", errorCode);
 
             return new ManipulationResult(errorCode, new Operation(typeof(User), updatedUsers, OperationType.Update));
         }
@@ -1120,6 +1138,8 @@ namespace SquareDMS.DatabaseAccess
         /// <returns>Result with errorCode.</returns>
         public async Task<ManipulationResult> DeleteUserAsync(int userId, int deleteUserId)
         {
+            _logger.Debug("User {0} deletes User with UserId from Database: {0}", userId, deleteUserId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -1138,6 +1158,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var deletedUsers = parameters.Get<int>("deletedUsers");
             var deletedGroupMembers = parameters.Get<int>("deletedGroupMembers");
+
+            _logger.Debug("User deleted from Database; ErrorCode: {0}", errorCode);
 
             return new ManipulationResult(errorCode,
                 new Operation(typeof(GroupMember), deletedGroupMembers, OperationType.Delete),
