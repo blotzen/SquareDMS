@@ -42,7 +42,7 @@ namespace SquareDMS.Core.Dispatchers
                 _logger.LogInformation("Username was not found in the database (Username: {0})", userCredential.UserName);
                 return null;
             }
-                
+
             var pwsMatch = Credential.MatchPasswordHashes(user.PasswordHash, userCredential.HashPassword());
 
             // passwords dont match
@@ -51,7 +51,7 @@ namespace SquareDMS.Core.Dispatchers
                 _logger.LogInformation("Passwords didnt match for Username: {0})", userCredential.UserName);
                 return null;
             }
-                
+
             return user;
         }
 

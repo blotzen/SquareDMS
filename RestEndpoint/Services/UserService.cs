@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using SquareDMS.Core;
@@ -91,6 +90,12 @@ namespace SquareDMS.RestEndpoint.Services
         public async Task<ManipulationResult> CreateUserAsync(int id, User user)
         {
             var userCredential = CreateCredential(user.UserName, user.Password);
+
+            _logger.Debug("Created Credential for user: {0}", user.UserName);
+
+            // is null when username or password dont fulfill guidelines
+            if (userCredential is null)
+                return null;
 
             // set the password hash and clear the stored pw
             user.PasswordHash = userCredential.HashPassword();

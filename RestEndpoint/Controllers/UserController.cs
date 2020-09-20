@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NLog;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
@@ -44,13 +43,16 @@ namespace SquareDMS.RestEndpoint.Controllers
         public async Task<ActionResult> LoginAsync([FromBody] Authentication.Request authenticateRequest)
         {
             _logger.Info("Login request from User: {0}", authenticateRequest.UserName);
-                
+
             var authenticationResponse = await _userService.Authenticate(authenticateRequest);
 
             if (authenticationResponse is null)
             {
+                _logger.Info("Username or password is incorrect or user is inactive.");
                 return BadRequest("Username or password is incorrect or user is inactive.");
             }
+
+            _logger.Info("User {0} successfully logged in", authenticateRequest.UserName);
 
             return Ok(authenticationResponse);
         }
@@ -62,14 +64,25 @@ namespace SquareDMS.RestEndpoint.Controllers
         [HttpPost]
         public async Task<ActionResult<ManipulationResult>> PostUserAsync([FromBody] User user)
         {
+            _logger.Info("Startet creating a new User");
+
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
-                return BadRequest();
+            {
+                _logger.Info("No userId has been found in the claims");
+                return BadRequest("Incorrect JWT. No userId Claim found.");
+            }
 
             var postResult = await _userService.CreateUserAsync(userIdClaimed.Value, user);
 
-            //if (postResult.ManipulatedAmount() == 1) { } // prüfung im Service machen und hier nur den Statuscode zurückgeben?
+            if (postResult is null)
+            {
+                _logger.Info("Cant create user, because username and/or password guidelines are not fulfilled");
+                return BadRequest("Cant create user, because username and/or password guidelines are not fulfilled.");
+            }
+
+            _logger.Info("New user ({0}) created with ErrorCode {1}", user.UserName, postResult.ErrorCode);
 
             return Ok(postResult);
         }
@@ -84,13 +97,22 @@ namespace SquareDMS.RestEndpoint.Controllers
             [FromQuery] string userName = null, [FromQuery] string email = null,
             [FromQuery] bool? active = null)
         {
+            _logger.Info("Startet retrieving Users");
+
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
-                return BadRequest();
+            {
+                _logger.Info("No userId has been found in the claims");
+                return BadRequest("Incorrect JWT. No userId Claim found.");
+            }
 
-            return Ok(await _userService.RetrieveUserAsync(userIdClaimed.Value, userId, lastName,
-                firstName, userName, email, active));
+            var retrievalResult = await _userService.RetrieveUserAsync(userIdClaimed.Value, userId, lastName,
+                firstName, userName, email, active);
+
+            _logger.Info("Users retrieved with ErrorCode {0}", retrievalResult.ErrorCode);
+
+            return Ok(retrievalResult);
         }
 
         /// <summary>
@@ -102,13 +124,18 @@ namespace SquareDMS.RestEndpoint.Controllers
         public async Task<ActionResult<ManipulationResult>> PatchUserAsync(int id,
             [FromBody] JsonPatchDocument<User> userPatch)
         {
+            _logger.Info("Startet updating a User");
+
             if (userPatch is null)
                 return BadRequest("Patch body is empty");
 
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
-                return BadRequest();
+            {
+                _logger.Info("No userId has been found in the claims");
+                return BadRequest("Incorrect JWT. No userId Claim found.");
+            }
 
             // create empty user ..
             var patchedUser = new User();
@@ -117,12 +144,20 @@ namespace SquareDMS.RestEndpoint.Controllers
             userPatch.ApplyTo(patchedUser);
 
             if (!TryValidateModel(patchedUser))
-                return BadRequest("Patch syntax invalid");
+            {
+                _logger.Info("Patch syntax invalid");
+                return BadRequest("Patch syntax invalid.");
+            }
 
             var patchResult = await _userService.UpdateUserAsync(userIdClaimed.Value, id, patchedUser);
 
             if (patchResult is null)
-                return BadRequest("Tried to update non updateable attributes");
+            {
+                _logger.Info("Tried to update non updateable attributes");
+                return BadRequest("Tried to update non updateable attributes.");
+            }
+
+            _logger.Info("User updated with ErrorCode {0}", patchResult.ErrorCode);
 
             return Ok(patchResult);
         }
@@ -134,12 +169,21 @@ namespace SquareDMS.RestEndpoint.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ManipulationResult>> DeleteUserAsync(int id)
         {
+            _logger.Info("Startet deleting a User");
+
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
             if (userIdClaimed is null)
-                return BadRequest();
+            {
+                _logger.Info("No userId has been found in the claims");
+                return BadRequest("Incorrect JWT. No userId Claim found.");
+            }
 
-            return Ok(await _userService.DeleteUserAsync(userIdClaimed.Value, id));
+            var deletionResult = await _userService.DeleteUserAsync(userIdClaimed.Value, id);
+
+            _logger.Info("User deleted with ErrorCode {0}", deletionResult.ErrorCode);
+
+            return Ok(deletionResult);
         }
     }
 }

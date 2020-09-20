@@ -11,7 +11,6 @@ using RestEndpoint.Services;
 using SquareDMS.CacheAccess;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DatabaseAccess;
-using SquareDMS.RestEndpoint.Controllers;
 using SquareDMS.RestEndpoint.Services;
 using SquareDMS.Services;
 using System;

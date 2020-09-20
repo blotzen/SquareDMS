@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using NLog;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
@@ -979,6 +978,8 @@ namespace SquareDMS.DatabaseAccess
             if (user is null)
                 throw new ArgumentNullException("user", "Cant create null user.");
 
+            _logger.Debug("User: {0} creates new User in the Database", userId);
+
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
@@ -1001,6 +1002,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var createdUsers = parameters.Get<int>("createdUsers");
 
+            _logger.Debug("Created new User in the Database; ErrorCode: {0}", errorCode);
+
             return new ManipulationResult(errorCode, new Operation(typeof(User), createdUsers, OperationType.Create));
         }
 
@@ -1016,6 +1019,8 @@ namespace SquareDMS.DatabaseAccess
             [Optional] string email, [Optional] bool? active)
         {
             DynamicParameters parameters = new DynamicParameters();
+
+            _logger.Debug("User: {0} retrieves Users from the Database", userId);
 
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@retrieveUserId", retrieveUserId, DbType.Int32, direction: ParameterDirection.Input);
@@ -1080,6 +1085,8 @@ namespace SquareDMS.DatabaseAccess
         {
             DynamicParameters parameters = new DynamicParameters();
 
+            _logger.Debug("User {0} updates User with UserId: {0}", userId, updateUserId);
+
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@updateUserId", updateUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);
@@ -1100,6 +1107,8 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var updatedUsers = parameters.Get<int>("updatedUsers");
+
+            _logger.Debug("User updated: {0}; ErrorCode: {0}", errorCode);
 
             return new ManipulationResult(errorCode, new Operation(typeof(User), updatedUsers, OperationType.Update));
         }
