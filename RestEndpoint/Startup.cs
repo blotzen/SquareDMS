@@ -11,6 +11,7 @@ using RestEndpoint.Services;
 using SquareDMS.CacheAccess;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DatabaseAccess;
+using SquareDMS.RestEndpoint.Controllers;
 using SquareDMS.RestEndpoint.Services;
 using SquareDMS.Services;
 using System;
@@ -70,17 +71,29 @@ namespace RestEndpoint
             // add cache to di as singleton
             services.AddSingleton<ISquareCache, SquareCacheRedis>();
 
-            services.AddScoped<UserService>();
-            services.AddScoped<UserDispatcher>();
+            services.AddScoped<DocumentService>();
+            services.AddScoped<DocumentDispatcher>();
+
+            services.AddScoped<DocumentTypeService>();
+            services.AddScoped<DocumentTypeDispatcher>();
 
             services.AddScoped<DocumentVersionService>();
             services.AddScoped<DocumentVersionDispatcher>();
 
-            services.AddScoped<DocumentService>();
-            services.AddScoped<DocumentDispatcher>();
+            services.AddScoped<FileFormatService>();
+            services.AddScoped<FileFormatDispatcher>();
+
+            services.AddScoped<GroupService>();
+            services.AddScoped<GroupDispatcher>();
+
+            services.AddScoped<GroupMemberService>();
+            services.AddScoped<GroupMemberDispatcher>();
 
             services.AddScoped<RightService>();
             services.AddScoped<RightDispatcher>();
+
+            services.AddScoped<UserService>();
+            services.AddScoped<UserDispatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
