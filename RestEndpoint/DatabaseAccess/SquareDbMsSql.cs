@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
@@ -23,6 +25,7 @@ namespace SquareDMS.DatabaseAccess
     public class SquareDbMsSql : ISquareDb
     {
         private readonly string _connectionString;
+        private readonly Logger _logger;
 
         /// <summary>
         /// Constructor for the MS SQL Db Access Class.
@@ -32,6 +35,7 @@ namespace SquareDMS.DatabaseAccess
         public SquareDbMsSql(IConfiguration configuration)
         {
             _connectionString = configuration["MsSqlDb:ConnectionString"].ToString();
+            _logger = LogManager.GetLogger("SquareDbMsSql");
         }
 
         /// <summary>
@@ -1049,6 +1053,8 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
 
+            _logger.Debug("Retrieve User by UserName: {0}", userName);
+
             IEnumerable<User> users;
 
             using (var connection = new SqlConnection(_connectionString))
@@ -1058,6 +1064,8 @@ namespace SquareDMS.DatabaseAccess
             }
 
             var errorCode = parameters.Get<int>("errorCode");
+
+            _logger.Debug("Retrieved User by UserName: {0}; ErrorCode: {1}", userName, errorCode);
 
             return new RetrievalResult<User>(errorCode, users);
         }

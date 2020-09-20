@@ -1,4 +1,5 @@
-﻿using SquareDMS.DatabaseAccess;
+﻿using Microsoft.Extensions.Logging;
+using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using System.Linq;
@@ -14,13 +15,15 @@ namespace SquareDMS.Core.Dispatchers
     public class UserDispatcher : Dispatcher
     {
         private readonly ISquareDb _squareDb;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// 
         /// </summary>
-        public UserDispatcher(ISquareDb squareDb)
+        public UserDispatcher(ISquareDb squareDb, ILogger<UserDispatcher> logger)
         {
             _squareDb = squareDb;
+            _logger = logger;
         }
 
         /// <summary>
@@ -35,14 +38,20 @@ namespace SquareDMS.Core.Dispatchers
 
             // user not found in db
             if (user is null)
+            {
+                _logger.LogInformation("Username was not found in the database (Username: {0})", userCredential.UserName);
                 return null;
-
+            }
+                
             var pwsMatch = Credential.MatchPasswordHashes(user.PasswordHash, userCredential.HashPassword());
 
             // passwords dont match
             if (!pwsMatch)
+            {
+                _logger.LogInformation("Passwords didnt match for Username: {0})", userCredential.UserName);
                 return null;
-
+            }
+                
             return user;
         }
 

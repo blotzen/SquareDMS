@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using SquareDMS.Core;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DataLibrary.Entities;
@@ -22,6 +24,7 @@ namespace SquareDMS.RestEndpoint.Services
     {
         private readonly IConfiguration _configuration;
         private readonly UserDispatcher _userDispatcher;
+        private readonly Logger _logger;
 
         /// <summary>
         /// Configuration and UserDispatcher are injected via DI.
@@ -30,6 +33,7 @@ namespace SquareDMS.RestEndpoint.Services
         {
             _configuration = configuration;
             _userDispatcher = userDispatcher;
+            _logger = LogManager.GetLogger("UserService");
         }
 
         #region Authentication
@@ -40,6 +44,8 @@ namespace SquareDMS.RestEndpoint.Services
         public async Task<Authentication.Response> Authenticate(Authentication.Request request)
         {
             Credential userCredential = CreateCredential(request.UserName, request.Password);
+
+            _logger.Debug("Created Credential for user: {0}", request.UserName);
 
             var user = await _userDispatcher.CheckUserCredentialAsync(userCredential);
 
@@ -118,6 +124,7 @@ namespace SquareDMS.RestEndpoint.Services
             // username cant be patched (changed)
             if (patchedUser.Id is null && patchedUser.UserName is null)
             {
+                // TODO: password change implementieren
                 return await _userDispatcher.UpdateUserAsync(id, patchUserId, patchedUser);
             }
 
@@ -145,8 +152,8 @@ namespace SquareDMS.RestEndpoint.Services
             }
             catch (ArgumentException argEx)
             {
-                var innerEx = argEx.InnerException;
-                // TODO: Log here
+                _logger.Warn("Cant create the Credential: {0}", argEx.Message);
+
                 return null;
             }
         }

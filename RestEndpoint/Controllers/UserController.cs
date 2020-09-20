@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NLog;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Services;
@@ -20,6 +22,7 @@ namespace SquareDMS.RestEndpoint.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly Logger _logger;
 
         /// <summary>
         /// Receives the UserService via Dependency Injection.
@@ -27,6 +30,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         public UserController(UserService userService)
         {
             _userService = userService;
+            _logger = LogManager.GetLogger("UserController");
         }
 
         /// <summary>
@@ -39,9 +43,8 @@ namespace SquareDMS.RestEndpoint.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> LoginAsync([FromBody] Authentication.Request authenticateRequest)
         {
-            if (authenticateRequest is null)
-                return BadRequest("Auth Request body is empty");
-
+            _logger.Info("Login request from User: {0}", authenticateRequest.UserName);
+                
             var authenticationResponse = await _userService.Authenticate(authenticateRequest);
 
             if (authenticationResponse is null)
