@@ -52,7 +52,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
         [Fact]
         public async void Get_OneUserByName()
         {
-            var readResult = await _squareDbMsSql.RetrieveUserByUserNameAsync("blotzen");
+            var readResult = await _squareDbMsSql.RetrieveUserByUserNameAsync("admin");
 
             var user = readResult.Resultset.ToList()[0];
 

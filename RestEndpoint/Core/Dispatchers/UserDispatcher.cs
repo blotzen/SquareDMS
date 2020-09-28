@@ -58,13 +58,19 @@ namespace SquareDMS.Core.Dispatchers
         #region CRUD-Operationen
         /// <summary>
         /// Creates a new user in the database or returns an errorcode if this
-        /// operation faulty.
+        /// operation faulty. Also creates a group for the user.
         /// </summary>
         /// <param name="id">User that creates the user</param>
         /// <param name="user">User to be created</param>
         /// <returns>ManipulationResult with errorCode</returns>
         public async Task<ManipulationResult> CreateUserAsync(int id, User user)
         {
+            // TODO: also create group when user is created
+
+            //await _squareDb.CreateGroupAsync(id, new Group())
+
+            //ManipulationResult createUserResult = new ManipulationResult()
+
             return await _squareDb.CreateUserAsync(id, user);
         }
 

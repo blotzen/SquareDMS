@@ -52,7 +52,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
             var retrievalResult = await _squareDbMsSql.RetrieveDocumentVersionAsync(1, 2);
 
             Assert.Single(retrievalResult.Resultset);
-            Assert.Equal(128, retrievalResult.Resultset.ToList()[0].DownloadFile?.FileStream.Length);
+            Assert.Equal(128, retrievalResult.Resultset.ToList()[0].RawFile.Length);
         }
     }
 }

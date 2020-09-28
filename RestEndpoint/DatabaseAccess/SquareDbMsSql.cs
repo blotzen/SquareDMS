@@ -521,7 +521,6 @@ namespace SquareDMS.DatabaseAccess
                 using (var sqlFileStream = new SqlFileStream(filePath, transactionId, FileAccess.Write))
                 {
                     await formFile.CopyToAsync(sqlFileStream);
-                    //await sqlFileStream.WriteAsync(payload);
                 }
 
                 return true;

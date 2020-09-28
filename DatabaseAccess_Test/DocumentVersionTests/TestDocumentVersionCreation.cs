@@ -1,7 +1,10 @@
-﻿using SquareDMS.DatabaseAccess;
+﻿using Microsoft.AspNetCore.Http;
+using Moq;
+using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
 using System;
+using System.IO;
 using Xunit;
 
 
@@ -12,6 +15,7 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
     {
         private readonly SquareDbMsSql _squareDbMsSql = new SquareDbMsSql(Globals.SqlConnectionstring);
         private readonly TestFixture _fixture;
+        private readonly byte[] _file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
 
         /// <param name="fixture">Class wide fixture</param>
         public TestDocumentVersionCreation(TestFixture fixture)
@@ -20,13 +24,26 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         }
 
         /// <summary>
+        /// Creates a mocked FormFile
+        /// </summary>
+        private IFormFile MockFormFile()
+        {
+            var mockedFormFile = new Mock<IFormFile>();
+
+            mockedFormFile.Setup(mock => mock.OpenReadStream()).Returns(new MemoryStream(_file));
+            mockedFormFile.Setup(mock => mock.ContentType).Returns("application/pdf");
+
+            return mockedFormFile.Object;
+        }
+
+        /// <summary>
         /// Admin creates a valid document version
         /// </summary>
         [Fact]
         public async void Admin_Create_Valid_DocVersion()
         {
-            var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
             var docVer = new DocumentVersion(1, 1);
+            docVer.UploadFile = MockFormFile();
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -40,8 +57,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         [Fact]
         public async void User_noPermissions_Create_Valid_DocVersion()
         {
-            var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
             var docVer = new DocumentVersion(1, 1);
+            docVer.UploadFile = MockFormFile();
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(10, docVer);
 
@@ -55,8 +72,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         [Fact]
         public async void Admin_Create_DocVersion_invalidDocId()
         {
-            var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
             var docVer = new DocumentVersion(99, 1);
+            docVer.UploadFile = MockFormFile();
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -70,8 +87,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         [Fact]
         public async void Admin_Create_DocVersion_invalidFileFormat()
         {
-            var file = new byte[] { 1, 234, 1, 44, 41, 23, 123 };
             var docVer = new DocumentVersion(1, 99);
+            docVer.UploadFile = MockFormFile();
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 
@@ -85,8 +102,8 @@ namespace SquareDMS.DatabaseAccess_Tests.DocumentVersionTest
         [Fact]
         public async void Admin_Create_DocVersion_NullFile()
         {
-            byte[] file = null;
             var docVer = new DocumentVersion(1, 1);
+            docVer.UploadFile = null;
 
             var creationResult = await _squareDbMsSql.CreateDocumentVersionAsync(1, docVer);
 

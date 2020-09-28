@@ -88,7 +88,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
         public async void Admin_CreateUserDuplicateUser()
         {
 
-            var user = new User("Brandl", null, "blotzen", null, passwordHash, false);
+            var user = new User("Brandl", null, "admin", null, passwordHash, false);
 
             var creationResult = await _squareDbMsSql.CreateUserAsync(1, user);
 
