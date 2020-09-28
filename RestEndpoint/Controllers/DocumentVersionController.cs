@@ -78,7 +78,7 @@ namespace SquareDMS.RestEndpoint.Controllers
             var retrievalResult = await _documentVersionService.RetrieveDocumentVersionPayloadAsync(userIdClaimed.Value, id);
             var retrievedDocumentVersion = retrievalResult.Resultset.FirstOrDefault();
 
-            if (retrievedDocumentVersion is null)
+            if (retrievedDocumentVersion is null || retrievedDocumentVersion.DownloadFile is null)
                 return new EmptyResult();
 
             return retrievedDocumentVersion.DownloadFile;

@@ -1,8 +1,11 @@
-﻿using NLog;
+﻿using Microsoft.AspNetCore.Mvc;
+using NLog;
 using SquareDMS.CacheAccess;
 using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
+using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,44 +56,75 @@ namespace SquareDMS.Core.Dispatchers
 
             // if error occured just return and dont populate cache
             if (metadataRetrievalResultSet.ErrorCode != 0)
+            {
+                _logger.Error("An error occured while trying to retrieve the documentVersion MetaData (Error-Code: {0})",
+                    metadataRetrievalResultSet.ErrorCode);
                 return metadataRetrievalResultSet;
+            }
 
             var retrievedDocumentVersion = metadataRetrievalResultSet.Resultset.FirstOrDefault();
 
-            // get document version for the document
-            var documentFileFormatRetrieval = _squareDb.RetrieveFileFormatsAsync(userId, retrievedDocumentVersion.DocumentId);
-
             // no matching document version found
             if (retrievedDocumentVersion is null)
+            {
+                _logger.Info("The document Version was not found (ID: {0})", documentVersionId);
                 return metadataRetrievalResultSet;
+            }
 
-            // check if retrieved version is in the cache
-            //var cachedPayload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id);
-            object cachedPayload = null;
+            // get file format for document
+            var docFileFormatRetrieval = _squareDb.RetrieveFileFormatsAsync(userId, retrievedDocumentVersion.FileFormatId);
+
+            // payload of the file (rawFile)
+            byte[] payload = null;
+
+            try
+            {
+                payload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("An error occured while trying to retrieve a playload from redis: {0}", ex.Message);
+            }
 
             // if payload is not cached
-            if (cachedPayload is null)
+            if (payload is null)
             {
+                // fetch from filestream via db and set to rawFile property (byte[])
                 var filestreamRetrieve = await _squareDb.RetrieveDocumentVersionAsync(userId, retrievedDocumentVersion.Id);
-                //// fetch from filestream via db and set
-                retrievedDocumentVersion.DownloadFile = filestreamRetrieve.Resultset.FirstOrDefault()?.DownloadFile;
+                payload = filestreamRetrieve.Resultset.FirstOrDefault()?.RawFile;
 
-                //// fire and forget the task to populate the cache
-                //_squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id, retrievedDocumentVersion.FilestreamData).FireAndForget();
-            }
-            else
-            {
-                //retrievedDocumentVersion.FilestreamData = cachedPayload;
+                try
+                {
+                    // populate the cache
+                    await _squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id, payload);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("An error occured while trying to put a playload into redis: {0}", ex.Message);
+                }
             }
 
             // await document fileformat
-            //var documentFileFormatRetrievalResult = await documentFileFormatRetrieval;
+            var documentFileFormatRetrievalResult = await docFileFormatRetrieval;
+            var documentFileFormat = documentFileFormatRetrievalResult.Resultset.FirstOrDefault();
 
-            //var documentFileFormat = documentFileFormatRetrievalResult.Resultset.FirstOrDefault();
+            // file format may be null (race condition)
+            if (documentFileFormat is null)
+            {
+                _logger.Error("File-Format for document (ID: {0}) was not found", retrievedDocumentVersion.DocumentId);
+                return metadataRetrievalResultSet;
+            }
 
-            // use file format for content type
-            //retrievedDocumentVersion.FormFile.ContentType = documentFileFormat.XXXXXXXXXXXXXXX
-            //retrievedDocumentVersion.DownloadFile.GenerateMediaType("application/pdf");
+            try
+            {
+                // create downloadFile from rawFile and media type (MIME type)
+                retrievedDocumentVersion.DownloadFile = new FileStreamResult(new MemoryStream(payload),
+                    $"application/{documentFileFormat.Extension}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error while creating the DownloadFile, maybe the MIME type is wrong? {0}", ex.Message);
+            }
 
             return metadataRetrievalResultSet;
         }

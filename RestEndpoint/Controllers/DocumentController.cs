@@ -110,7 +110,7 @@ namespace SquareDMS.RestEndpoint.Controllers
                 _logger.Info("Patch syntax invalid");
                 return BadRequest("Patch syntax invalid");
             }
-                
+
             var patchResult = await _documentService.UpdateDocumentAsync(userIdClaimed.Value, id, patchedDocument);
 
             if (patchResult is null)

@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using SquareDMS.DataLibrary;
@@ -31,18 +30,26 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <param name="connectonString">Connection String to the
         /// MS SQL DB.</param>
-        public SquareDbMsSql(IConfiguration configuration)
+        public SquareDbMsSql(IConfiguration configuration) : this()
         {
             _connectionString = configuration["MsSqlDb:ConnectionString"].ToString();
-            _logger = LogManager.GetLogger("SquareDbMsSql");
+
         }
 
         /// <summary>
         /// Constructor for testing where the conStr. is directly supplied.
         /// </summary>
-        public SquareDbMsSql(string connectionString)
+        public SquareDbMsSql(string connectionString) : this()
         {
             _connectionString = connectionString;
+        }
+
+        /// <summary>
+        /// Base constructor for logging
+        /// </summary>
+        public SquareDbMsSql()
+        {
+            _logger = LogManager.GetLogger("SquareDbMsSql");
         }
 
         #region Document-Operations
@@ -413,7 +420,7 @@ namespace SquareDMS.DatabaseAccess
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
 
             IEnumerable<DocumentVersion> documentVersions;
-            FileStreamResult dlFile = null;
+            byte[] rawFile = null;
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -432,12 +439,9 @@ namespace SquareDMS.DatabaseAccess
                     if (errorCode == 0 && documentVersion != null)
                     {
                         // retrieve the payload and populate the documentVersion with it (null in case of error)
-                        var memoryStream = await RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
+                        rawFile = await RetrieveDocumentVersionPayloadAsync(documentVersion.FilePath, documentVersion.TransactionId);
 
-                        // creates the file from the memoryStream
-                        dlFile = new FileStreamResult(memoryStream, "application/octet-stream");
-
-                        documentVersion.DownloadFile = dlFile;
+                        documentVersion.RawFile = rawFile;
                     }
 
                     transaction.Commit();   // always commit because its read only.
@@ -445,7 +449,7 @@ namespace SquareDMS.DatabaseAccess
             }
 
             // set errorCode if payload retrieve from fs failed
-            if (dlFile is null)
+            if (rawFile is null)
                 errorCode = 128;
 
             return new RetrievalResult<DocumentVersion>(errorCode, documentVersions);
@@ -483,7 +487,7 @@ namespace SquareDMS.DatabaseAccess
         /// Gets the payload for a given document version.
         /// </summary>
         /// <returns>In case of an IO Error, null will be returned.</returns>
-        private async Task<Stream> RetrieveDocumentVersionPayloadAsync(string filePath, byte[] transactionId)
+        private async Task<byte[]> RetrieveDocumentVersionPayloadAsync(string filePath, byte[] transactionId)
         {
             try
             {
@@ -493,9 +497,7 @@ namespace SquareDMS.DatabaseAccess
 
                     await sqlFileStream.ReadAsync(file);
 
-                    var memoryStream = new MemoryStream(file);
-
-                    return memoryStream;
+                    return file;
                 }
             }
             catch (Exception ex)
@@ -1037,7 +1039,7 @@ namespace SquareDMS.DatabaseAccess
             _logger.Debug("User: {0} retrieves Users from the Database", userId);
 
             DynamicParameters parameters = new DynamicParameters();
-          
+
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@retrieveUserId", retrieveUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);
@@ -1104,7 +1106,7 @@ namespace SquareDMS.DatabaseAccess
             _logger.Debug("User {0} updates User with UserId: {0}", userId, updateUserId);
 
             DynamicParameters parameters = new DynamicParameters();
-            
+
             parameters.Add("@userId", userId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@updateUserId", updateUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);

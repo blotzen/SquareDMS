@@ -35,6 +35,12 @@ namespace SquareDMS.DataLibrary.Entities
         public string FilePath { get; private set; }
 
         /// <summary>
+        /// Binary representation of the payload (used for file download)
+        /// </summary>
+        [JsonIgnore]
+        public byte[] RawFile { get; set; }
+
+        /// <summary>
         /// The uploaded File (Stream)
         /// </summary>
         public IFormFile UploadFile { get; set; }
