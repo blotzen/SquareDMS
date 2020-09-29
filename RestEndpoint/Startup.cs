@@ -16,7 +16,7 @@ using SquareDMS.Services;
 using System;
 using System.Text;
 
-namespace RestEndpoint
+namespace SquareDMS.RestEndpoint
 {
     public class Startup
     {

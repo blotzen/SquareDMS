@@ -7,6 +7,8 @@ namespace SquareDMS.RestEndpoint.Authentication
     /// </summary>
     public class Response
     {
+        public Response() { }
+
         public Response(User user, string token)
         {
             Id = user.Id;
