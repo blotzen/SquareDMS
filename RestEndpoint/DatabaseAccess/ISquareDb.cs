@@ -271,13 +271,20 @@ namespace SquareDMS.DatabaseAccess
         /// This operation CANT BE REVERSED. Use with CAUTION!
         /// </summary>
         /// <returns>ErrorCode</returns>
-        public int SysDeleteAndResetAllData();
+        int SysDeleteAndResetAllData();
 
         /// <summary>
         /// Inserts test data for the integration tests.
         /// </summary>
         /// <returns>ErrorCode</returns>
-        public int SysInsertSetupTestData();
+        int SysInsertSetupTestData();
+
+        /// <summary>
+        /// Insers the default admin user and the default groups (admin, creator, user)
+        /// only does so if the the tables user, groups and group_member are empty.
+        /// </summary>
+        /// <returns>ErrorCode</returns>
+        int SysInsertDefaultAdminAndGroups();
         #endregion
     }
 }

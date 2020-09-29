@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System_Test
+namespace SquareDMS.System_Test
 {
     public abstract class SystemTest
     {

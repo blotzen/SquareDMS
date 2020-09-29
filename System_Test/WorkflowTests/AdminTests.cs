@@ -1,16 +1,23 @@
 ﻿using SquareDMS.RestEndpoint.Authentication;
 using Xunit;
 
-namespace System_Test
+namespace SquareDMS.System_Test.WorkflowTests
 {
     [Collection("Sequential")]
-    public class AdminTests : SystemTest
+    public class AdminTests : SystemTest, IClassFixture<ResetDbFixture>
     {
+        private readonly ResetDbFixture _clearDbFixture;
+
         private readonly Request _adminValidLoginRequest = new Request
         {
             UserName = "admin",
             Password = "admin"
         };
+
+        public AdminTests(ResetDbFixture clearDbFixture)
+        {
+            _clearDbFixture = clearDbFixture;
+        }
 
         /// <summary>
         /// Admin logs in with valid credentials.
@@ -24,5 +31,7 @@ namespace System_Test
             Assert.NotNull(response.Token);
             Assert.Equal("admin", response.UserName);
         }
+
+
     }
 }

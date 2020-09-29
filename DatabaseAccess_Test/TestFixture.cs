@@ -5,7 +5,7 @@ namespace SquareDMS.DatabaseAccess_Tests
 {
     public class TestFixture : IDisposable
     {
-        private readonly SquareDbMsSql squareDbMsSql = new SquareDbMsSql(Globals.SqlConnectionstring);
+        private readonly SquareDbMsSql _squareDbMsSql = new SquareDbMsSql(Globals.SqlConnectionstring);
 
         /// <summary>
         /// Constructor calls the ResetDbToTestValues() Function.
@@ -25,7 +25,7 @@ namespace SquareDMS.DatabaseAccess_Tests
         /// </summary>
         private void ResetDbToTestValues()
         {
-            var deleteAllResult = squareDbMsSql.SysDeleteAndResetAllData();
+            var deleteAllResult = _squareDbMsSql.SysDeleteAndResetAllData();
 
             if (deleteAllResult != 0)
             {
@@ -33,7 +33,7 @@ namespace SquareDMS.DatabaseAccess_Tests
                     $" data from the Database. Error-Code: {deleteAllResult}");
             }
 
-            var testSetupResult = squareDbMsSql.SysInsertSetupTestData();
+            var testSetupResult = _squareDbMsSql.SysInsertSetupTestData();
 
             if (testSetupResult != 0)
             {

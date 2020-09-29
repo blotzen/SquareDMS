@@ -1207,6 +1207,26 @@ namespace SquareDMS.DatabaseAccess
 
             return parameters.Get<int>("errorCode");
         }
+
+        /// <summary>
+        /// Insers the default admin user and the default groups (admin, creator, user)
+        /// only does so if the the tables user, groups and group_member are empty.
+        /// </summary>
+        /// <returns>ErrorCode</returns>
+        public int SysInsertDefaultAdminAndGroups()
+        {
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Query("[critical_proc_insert_default_admin_and_groups]", parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+
+            return parameters.Get<int>("errorCode");
+        }    
         #endregion
     }
 }
