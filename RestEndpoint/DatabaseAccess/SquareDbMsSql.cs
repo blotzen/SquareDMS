@@ -1226,7 +1226,7 @@ namespace SquareDMS.DatabaseAccess
             }
 
             return parameters.Get<int>("errorCode");
-        }    
+        }
         #endregion
     }
 }

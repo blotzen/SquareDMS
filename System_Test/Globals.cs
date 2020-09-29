@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SquareDMS.System_Test
+﻿namespace SquareDMS.System_Test
 {
     internal class Globals
     {

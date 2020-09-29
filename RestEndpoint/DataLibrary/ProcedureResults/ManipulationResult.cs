@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SquareDMS.DataLibrary.ProcedureResults
 {
@@ -12,17 +14,25 @@ namespace SquareDMS.DataLibrary.ProcedureResults
         /// in which amount.
         /// </summary>
         /// <exception cref="ArgumentException">Duplicate entry added to dict.</exception>
-        public ManipulationResult(int errorCode, Operation manipulatedEntity,
-            params Operation[] manipulatedEntities)
+        public ManipulationResult(int errorCode, params Operation[] manipulatedEntities)
         {
             ErrorCode = errorCode;
-            _manipulatedEntities.Add(manipulatedEntity);    // Trick for at least one entry...
 
             foreach (var manipulation in manipulatedEntities)
             {
                 _manipulatedEntities.Add(manipulation);
             }
         }
+
+        /// <summary>
+        /// Operations that have been made
+        /// </summary>
+        public ReadOnlyCollection<Operation> Operations
+        {
+            get => new ReadOnlyCollection<Operation>(_manipulatedEntities);
+        }
+
+        public int ErrorCode { get; private set; }
 
         /// <summary>
         /// Contains the id of the manipulated entity. (null if not necessary)
@@ -45,7 +55,5 @@ namespace SquareDMS.DataLibrary.ProcedureResults
 
             return 0;
         }
-
-        public int ErrorCode { get; }
     }
 }
