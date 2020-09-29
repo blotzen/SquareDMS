@@ -71,6 +71,9 @@ namespace SquareDMS.Core.Dispatchers
                 return metadataRetrievalResultSet;
             }
 
+            // get corresponding document for document version
+            var correspondingDocumentRetrieval = _squareDb.RetrieveDocumentsAsync(userId, docId: retrievedDocumentVersion.DocumentId);
+
             // get file format for document
             var docFileFormatRetrieval = _squareDb.RetrieveFileFormatsAsync(userId, retrievedDocumentVersion.FileFormatId);
 
@@ -120,6 +123,11 @@ namespace SquareDMS.Core.Dispatchers
                 // create downloadFile from rawFile and media type (MIME type)
                 retrievedDocumentVersion.DownloadFile = new FileStreamResult(new MemoryStream(payload),
                     $"application/{documentFileFormat.Extension}");
+
+                // await the corresponding document at last
+                var correspondingDocument = (await correspondingDocumentRetrieval).Resultset.FirstOrDefault();
+
+                retrievedDocumentVersion.DownloadFile.FileDownloadName = correspondingDocument?.Name ?? $"Document_Version_{DateTime.Now}";
             }
             catch (Exception ex)
             {
