@@ -30,7 +30,7 @@ namespace SquareDMS.DataLibrary.Entities
             Creator = creator;
         }
 
-        public int? Id { get; private set; }
+        public int? Id { get; set; }
 
         [StringLength(250, ErrorMessage = "Exceeded 250 characters limit")]
         public string Name { get; set; }

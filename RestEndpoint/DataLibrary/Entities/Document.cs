@@ -25,7 +25,7 @@ namespace SquareDMS.DataLibrary.Entities
             Discard = discard;
         }
 
-        public int? Id { get; private set; }
+        public int? Id { get; set; }
 
         public int? Creator { get; set; }
 

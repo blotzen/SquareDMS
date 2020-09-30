@@ -27,7 +27,7 @@ namespace SquareDMS.DataLibrary.Entities
             FileFormatId = fileFormatId;
         }
 
-        public int? Id { get; private set; }
+        public int? Id { get; set; }
 
         public int DocumentId { get; set; }
 

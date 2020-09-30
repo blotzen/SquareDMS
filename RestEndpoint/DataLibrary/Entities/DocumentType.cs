@@ -25,7 +25,7 @@ namespace SquareDMS.DataLibrary.Entities
             Description = description;
         }
 
-        public int? Id { get; private set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Name of the document type.

@@ -26,7 +26,7 @@ namespace SquareDMS.DataLibrary.Entities
         /// <summary>
         /// Id of the entity
         /// </summary>
-        public int? Id { get; private set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// An all lowercase indication of the fileformat.

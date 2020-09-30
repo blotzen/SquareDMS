@@ -1,6 +1,7 @@
 ﻿using SquareDMS.DataLibrary.Entities;
 using SquareDMS.RestEndpoint.Authentication;
 using System.Net;
+using System.Net.WebSockets;
 using Xunit;
 
 namespace SquareDMS.System_Test.WorkflowTests
@@ -27,9 +28,9 @@ namespace SquareDMS.System_Test.WorkflowTests
             LastName = "Hauser",
             FirstName = "Günter",
             UserName = "bgboss",
-            Password = "sehrnice123"
+            Password = "sehrnice123",
+            Active = true
         };
-
 
         /// <param name="clearDbFixture">Class wide fixture</param>
         public AdminTests(ResetDbFixture clearDbFixture)
@@ -54,29 +55,85 @@ namespace SquareDMS.System_Test.WorkflowTests
         }
 
         /// <summary>
-        /// Admin creates a valid User.
+        /// Admin creates a valid User and puts him into the creators group. Creates a new document 
+        /// as admin and gives the newly created user read rights on the document.
         /// </summary>
         [Fact]
         public async void CreateNewUser_valid()
         {
             // login admin
-            var loginResponse = await PostLoginAsync("api/v1/users/login", _adminValidLoginRequest);
-            var loginBody = loginResponse.Item2;
+            var loginResponseAdmin = await PostLoginAsync("api/v1/users/login", _adminValidLoginRequest);
+            var loginBodyAdmin = loginResponseAdmin.Item2;
 
             // create user
-            var response = await PostCRUDAsync("api/v1/users", _user, loginBody.Token);
-            var statusCode = response.Item1;
-            var postResult = response.Item2;
+            var createUserResponse = await PostAsync<User>("api/v1/users", _user, loginBodyAdmin.Token);
+            var createUserStatusCode = createUserResponse.Item1;
+            var createUserPostResult = createUserResponse.Item2;
 
-            Assert.Equal(HttpStatusCode.OK, statusCode);
-            Assert.Equal(0, postResult.ErrorCode);
-            Assert.Equal(1, postResult.ManipulatedAmount(typeof(User), DataLibrary.OperationType.Create));
+            Assert.Equal(HttpStatusCode.OK, createUserStatusCode);
+            Assert.Equal(0, createUserPostResult.ErrorCode);
+            Assert.Equal(1, createUserPostResult.ManipulatedAmount(typeof(User), DataLibrary.OperationType.Create));
+            Assert.NotNull(createUserPostResult.ManipulatedEntity.Id);
+            //-----------------------------------------------------------
 
+            // put new user in the creators group
+            var createGroupMemberResponse = await PostAsync<GroupMember>("api/v1/groupmembers", 
+                new GroupMember(3, createUserPostResult.ManipulatedEntity.Id), 
+                loginBodyAdmin.Token);
 
-            // put new user in the users group
+            var createGroupMemberStatusCode = createGroupMemberResponse.Item1;
+            var createGroupMemberResult = createGroupMemberResponse.Item2;
 
-            // need user id...........
+            Assert.Equal(HttpStatusCode.OK, createGroupMemberStatusCode);
+            Assert.Equal(0, createGroupMemberResult.ErrorCode);
+            Assert.Equal(1, createGroupMemberResult.ManipulatedAmount(typeof(GroupMember), DataLibrary.OperationType.Create));
+            Assert.Equal(3, createGroupMemberResult.ManipulatedEntity.GroupId);
+            //-----------------------------------------------------------
 
+            // create new document type
+            var createDocumentTypeResponse = await PostAsync<DocumentType>("api/v1/documentTypes",
+                new DocumentType("E-Book", null), loginBodyAdmin.Token);
+
+            var createDocumentTypeStatusCode = createDocumentTypeResponse.Item1;
+            var createDocumentTypePostResult = createDocumentTypeResponse.Item2;
+
+            Assert.Equal(HttpStatusCode.OK, createDocumentTypeStatusCode);
+            Assert.Equal(0, createDocumentTypePostResult.ErrorCode);
+            Assert.Equal(1, createDocumentTypePostResult.ManipulatedAmount(typeof(DocumentType), DataLibrary.OperationType.Create));
+            Assert.NotNull(createDocumentTypePostResult.ManipulatedEntity.Id);
+            //-----------------------------------------------------------
+
+            // login new user
+            var loginResponseCreator = await PostLoginAsync("api/v1/users/login", new Request() { 
+                UserName = _user.UserName,
+                Password = _user.Password
+            });
+            var loginBodyCreator = loginResponseCreator.Item2;
+            //-----------------------------------------------------------
+
+            // new user creates new document
+            var createDocumentResponse = await PostAsync<Document>("api/v1/documents",
+                new Document(createDocumentTypePostResult.ManipulatedEntity.Id.Value, "Der Duden"), loginBodyCreator.Token);
+
+            var createDocumentStatusCode = createDocumentResponse.Item1;
+            var createDocumentPostResult = createDocumentResponse.Item2;
+
+            Assert.Equal(HttpStatusCode.OK, createDocumentStatusCode);
+            Assert.Equal(0, createDocumentPostResult.ErrorCode);
+            Assert.Equal(1, createDocumentPostResult.ManipulatedAmount(typeof(Document), DataLibrary.OperationType.Create));
+            Assert.NotNull(createDocumentPostResult.ManipulatedEntity.Id);
+            //-----------------------------------------------------------
+
+            // retrieve created document as created user
+            var retrieveDocumentResponse = await GetAsync<Document>(@$"api/v1/documents?docId={createDocumentPostResult.ManipulatedEntity.Id.Value}", 
+                loginBodyCreator.Token);
+
+            var retrievedDocumentStatusCode = retrieveDocumentResponse.Item1;
+            var retrievedDocumentGetResult = retrieveDocumentResponse.Item2;
+
+            Assert.Equal(HttpStatusCode.OK, retrievedDocumentStatusCode);
+            Assert.Equal(0, retrievedDocumentGetResult.ErrorCode);
+            Assert.Single(retrievedDocumentGetResult.Resultset);
         }
     }
 }

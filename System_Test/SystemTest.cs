@@ -32,10 +32,10 @@ namespace SquareDMS.System_Test
         protected HttpClient TestClient { get; }
 
         /// <summary>
-        /// Does a POST CRUD Operation (ManipulationResult)
+        /// Does a POST Operation (ManipulationResult)
         /// </summary>
         /// <returns>Tuple of HttpStatusCode and ManipulationResult or (null, null) in case of an error</returns>
-        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostCRUDAsync<T>(string url, T entity, string jwt) where T : IDataTransferObject
+        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostAsync<T>(string url, T entity, string jwt) where T : IDataTransferObject
         {
             var serializedEntity = JsonConvert.SerializeObject(entity);
             var content = new StringContent(serializedEntity, Encoding.UTF8, "application/json");
@@ -53,6 +53,31 @@ namespace SquareDMS.System_Test
             try
             {
                 return (httpResponse.StatusCode, DeserializeManipulationResult<T>(serializedManipulationResult));
+            }
+            catch (Exception ex)
+            {
+                return (null, null);
+            }
+        }
+
+        /// <summary>
+        /// Does a GET Operation (RetrievalResult)
+        /// </summary>
+        protected async Task<(HttpStatusCode?, RetrievalResult<T>)> GetAsync<T>(string url, string jwt) where T : IDataTransferObject
+        {
+            TestClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
+
+            var httpResponse = await TestClient.GetAsync(url);
+
+            // delete auth header after request was made
+            TestClient.DefaultRequestHeaders.Authorization = null;
+
+            var serializedRetrievalResult = await httpResponse.Content.ReadAsStringAsync();
+
+            try
+            {
+                return (httpResponse.StatusCode, DeserializeRetrievalResult<T>(serializedRetrievalResult));
             }
             catch (Exception ex)
             {
@@ -83,7 +108,7 @@ namespace SquareDMS.System_Test
         }
 
         /// <summary>
-        /// Deserializes a ManipulationResult
+        /// Deserializes a ManipulationResult of type T
         /// </summary>
         private ManipulationResult<T> DeserializeManipulationResult<T>(string serializedManipulationResult) where T : IDataTransferObject
         {
@@ -102,6 +127,25 @@ namespace SquareDMS.System_Test
             var manipulatedEntity = manipulatedEntitySerialized.ToObject<T>();
 
             return new ManipulationResult<T>(errorCode.GetValueOrDefault(), manipulatedEntity, operations.ToArray());
+        }
+
+        /// <summary>
+        /// Deserializes a RetrievalResult of type T
+        /// </summary>
+        private RetrievalResult<T> DeserializeRetrievalResult<T>(string serializedRetrievalResult) where T : IDataTransferObject
+        {
+            var parsedInput = JObject.Parse(serializedRetrievalResult);
+
+            // extract resultset from the serialized RetrievalResult
+            var resultSetSerialized = parsedInput["resultset"].Children().ToList();
+
+            var resultSet = new List<T>();
+            resultSetSerialized.ForEach(item => resultSet.Add(item.ToObject<T>()));
+
+            var errorCodeSerialized = parsedInput["errorCode"];
+            var errorCode = errorCodeSerialized.ToObject<int?>();
+
+            return new RetrievalResult<T>(errorCode.GetValueOrDefault(), resultSet);
         }
     }
 }

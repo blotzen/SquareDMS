@@ -13,7 +13,7 @@ namespace SquareDMS.RestEndpoint.Controllers
     /// for the Ressource DocumentType.
     /// </summary>
     [Authorize]
-    [Route("api/DocumentTypes")]
+    [Route("api/v1/DocumentTypes")]
     [ApiController]
     public class DocumentTypeController : ControllerBase
     {
