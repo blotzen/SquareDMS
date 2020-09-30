@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SquareDMS.DataLibrary;
+using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Authentication;
 using System;
@@ -34,7 +35,7 @@ namespace SquareDMS.System_Test
         /// Does a POST CRUD Operation (ManipulationResult)
         /// </summary>
         /// <returns>Tuple of HttpStatusCode and ManipulationResult or (null, null) in case of an error</returns>
-        protected async Task<(HttpStatusCode?, ManipulationResult)> PostCRUDAsync(string url, object entity, string jwt)
+        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostCRUDAsync<T>(string url, T entity, string jwt) where T : IDataTransferObject
         {
             var serializedEntity = JsonConvert.SerializeObject(entity);
             var content = new StringContent(serializedEntity, Encoding.UTF8, "application/json");
@@ -51,7 +52,7 @@ namespace SquareDMS.System_Test
 
             try
             {
-                return (httpResponse.StatusCode, DeserializeManipulationResult(serializedManipulationResult));
+                return (httpResponse.StatusCode, DeserializeManipulationResult<T>(serializedManipulationResult));
             }
             catch (Exception ex)
             {
@@ -84,7 +85,7 @@ namespace SquareDMS.System_Test
         /// <summary>
         /// Deserializes a ManipulationResult
         /// </summary>
-        private ManipulationResult DeserializeManipulationResult(string serializedManipulationResult)
+        private ManipulationResult<T> DeserializeManipulationResult<T>(string serializedManipulationResult) where T : IDataTransferObject
         {
             var parsedInput = JObject.Parse(serializedManipulationResult);
 
@@ -97,7 +98,10 @@ namespace SquareDMS.System_Test
             var errorCodeSerialized = parsedInput["errorCode"];
             var errorCode = errorCodeSerialized.ToObject<int?>();
 
-            return new ManipulationResult(errorCode.GetValueOrDefault(), operations.ToArray());
+            var manipulatedEntitySerialized = parsedInput["manipulatedEntity"];
+            var manipulatedEntity = manipulatedEntitySerialized.ToObject<T>();
+
+            return new ManipulationResult<T>(errorCode.GetValueOrDefault(), manipulatedEntity, operations.ToArray());
         }
     }
 }

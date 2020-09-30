@@ -13,14 +13,14 @@
         /// <summary>
         /// Creates a new GroupMember
         /// </summary>
-        public GroupMember(int groupId, int userId)
+        public GroupMember(int? groupId, int? userId)
         {
             GroupId = groupId;
             UserId = userId;
         }
 
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

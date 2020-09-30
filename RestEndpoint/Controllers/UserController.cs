@@ -62,7 +62,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// </summary>
         /// <returns>Manipulationresult</returns>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostUserAsync([FromBody] User user)
+        public async Task<ActionResult<ManipulationResult<User>>> PostUserAsync([FromBody] User user)
         {
             _logger.Info("Startet creating a new User");
 
@@ -121,7 +121,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// <param name="id">Id of the user to be updated</param>
         /// <param name="userPatch">JSON Patch body</param>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchUserAsync(int id,
+        public async Task<ActionResult<ManipulationResult<User>>> PatchUserAsync(int id,
             [FromBody] JsonPatchDocument<User> userPatch)
         {
             _logger.Info("Startet updating a User");
@@ -167,7 +167,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// the executing user has permissions.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteUserAsync(int id)
+        public async Task<ActionResult<ManipulationResult<User>>> DeleteUserAsync(int id)
         {
             _logger.Info("Startet deleting a User");
 

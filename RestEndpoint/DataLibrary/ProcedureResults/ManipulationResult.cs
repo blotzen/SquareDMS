@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SquareDMS.DataLibrary.Entities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection.Metadata.Ecma335;
 
 namespace SquareDMS.DataLibrary.ProcedureResults
 {
-    public class ManipulationResult : IProcedureResult
+    public class ManipulationResult<T> : IProcedureResult where T : IDataTransferObject
     {
         private readonly List<Operation> _manipulatedEntities = new List<Operation>();
 
@@ -14,11 +14,12 @@ namespace SquareDMS.DataLibrary.ProcedureResults
         /// in which amount.
         /// </summary>
         /// <exception cref="ArgumentException">Duplicate entry added to dict.</exception>
-        public ManipulationResult(int errorCode, params Operation[] manipulatedEntities)
+        public ManipulationResult(int errorCode, T manipulatedEntity, params Operation[] operations)
         {
             ErrorCode = errorCode;
+            ManipulatedEntity = manipulatedEntity;
 
-            foreach (var manipulation in manipulatedEntities)
+            foreach (var manipulation in operations)
             {
                 _manipulatedEntities.Add(manipulation);
             }
@@ -35,9 +36,10 @@ namespace SquareDMS.DataLibrary.ProcedureResults
         public int ErrorCode { get; private set; }
 
         /// <summary>
-        /// Contains the id of the manipulated entity. (null if not necessary)
+        /// Contains the the manipulated entity (only the ids are filled). Currently
+        /// only used for creating a entitys.
         /// </summary>
-        // public int? ManipulatedId { get; set; } // for new feature: put payload into cache after insertion
+        public T ManipulatedEntity { get; set; } // for new feature: put payload into cache after insertion
 
         /// <summary>
         /// Gets the manipulated amount of entities by the entity and the operation

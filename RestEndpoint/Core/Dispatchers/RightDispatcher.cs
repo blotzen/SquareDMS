@@ -21,7 +21,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateRightAsync(int userId, Right right)
+        public async Task<ManipulationResult<Right>> CreateRightAsync(int userId, Right right)
         {
             return await _squareDb.CreateRightAsync(userId, right);
         }
@@ -37,7 +37,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId,
+        public async Task<ManipulationResult<Right>> UpdateRightAsync(int userId, int groupId, int docId,
             Right patchedRight)
         {
             return await _squareDb.UpdateRightAsync(userId, groupId, docId, patchedRight.AccessLevel);
@@ -46,7 +46,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteRightAsync(int userId, int groupId, int docId)
+        public async Task<ManipulationResult<Right>> DeleteRightAsync(int userId, int groupId, int docId)
         {
             return await _squareDb.DeleteRightsAsync(userId, groupId, docId);
         }

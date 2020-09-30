@@ -9,6 +9,14 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public Document() { }
 
+        /// <summary>
+        /// For ManipluationResult
+        /// </summary>
+        public Document(int? id)
+        {
+            Id = id;
+        }
+
         public Document(int docType, string name, bool locked = false, bool discard = false)
         {
             DocumentType = docType;

@@ -87,7 +87,7 @@ namespace SquareDMS.RestEndpoint.Services
         /// Creates the user. Before doing that the password hash is computed and
         /// the plaintext password is deleted.
         /// </summary>
-        public async Task<ManipulationResult> CreateUserAsync(int id, User user)
+        public async Task<ManipulationResult<User>> CreateUserAsync(int id, User user)
         {
             var userCredential = CreateCredential(user.UserName, user.Password);
 
@@ -124,7 +124,7 @@ namespace SquareDMS.RestEndpoint.Services
         /// <param name="patchUserId">id of the user to patch</param>
         /// <param name="patchedUser">patched user informations</param>
         /// <returns></returns>
-        public async Task<ManipulationResult> UpdateUserAsync(int id, int patchUserId, User patchedUser)
+        public async Task<ManipulationResult<User>> UpdateUserAsync(int id, int patchUserId, User patchedUser)
         {
             // username cant be patched (changed)
             if (patchedUser.Id is null && patchedUser.UserName is null)
@@ -141,7 +141,7 @@ namespace SquareDMS.RestEndpoint.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ManipulationResult> DeleteUserAsync(int id, int deleteUserId)
+        public async Task<ManipulationResult<User>> DeleteUserAsync(int id, int deleteUserId)
         {
             return await _userDispatcher.DeleteUserAsync(id, deleteUserId);
         }

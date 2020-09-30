@@ -24,7 +24,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateFileFormatAsync(int userId, FileFormat fileFormat)
+        public async Task<ManipulationResult<FileFormat>> CreateFileFormatAsync(int userId, FileFormat fileFormat)
         {
             return await _squareDb.CreateFileFormatAsync(userId, fileFormat);
         }
@@ -41,7 +41,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateFileFormatAsync(int userId, int id, FileFormat patchedFileFormat)
+        public async Task<ManipulationResult<FileFormat>> UpdateFileFormatAsync(int userId, int id, FileFormat patchedFileFormat)
         {
             return await _squareDb.UpdateFileFormatAsync(userId, id,
                 patchedFileFormat.Extension, patchedFileFormat.Description);
@@ -50,7 +50,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteFileFormatAsync(int userId, int id)
+        public async Task<ManipulationResult<FileFormat>> DeleteFileFormatAsync(int userId, int id)
         {
             return await _squareDb.DeleteFileFormatAsync(userId, id);
         }

@@ -72,9 +72,9 @@ namespace SquareDMS.System_Test.WorkflowTests
             Assert.Equal(0, postResult.ErrorCode);
             Assert.Equal(1, postResult.ManipulatedAmount(typeof(User), DataLibrary.OperationType.Create));
 
-            
+
             // put new user in the users group
-            
+
             // need user id...........
 
         }

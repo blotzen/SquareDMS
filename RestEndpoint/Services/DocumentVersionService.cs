@@ -25,7 +25,7 @@ namespace RestEndpoint.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateDocumentVersionAsync(int userId, DocumentVersion documentVersion)
+        public async Task<ManipulationResult<DocumentVersion>> CreateDocumentVersionAsync(int userId, DocumentVersion documentVersion)
         {
             return await _documentVersionDispatcher.CreateDocumentVersionAsync(userId, documentVersion);
         }

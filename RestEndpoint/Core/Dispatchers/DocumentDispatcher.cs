@@ -21,7 +21,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateDocumentAsync(int userId, Document document)
+        public async Task<ManipulationResult<Document>> CreateDocumentAsync(int userId, Document document)
         {
             return await _squareDb.CreateDocumentAsync(userId, document);
         }
@@ -39,7 +39,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateDocumentAsync(int userId, int id, Document patchedDocument)
+        public async Task<ManipulationResult<Document>> UpdateDocumentAsync(int userId, int id, Document patchedDocument)
         {
             return await _squareDb.UpdateDocumentAsync(userId, id, patchedDocument.DocumentType, patchedDocument.Name,
                 patchedDocument.Locked, patchedDocument.Discard);
@@ -48,7 +48,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteDocumentAsync(int userId, int id)
+        public async Task<ManipulationResult<Document>> DeleteDocumentAsync(int userId, int id)
         {
             return await _squareDb.DeleteDocumentAsync(userId, id);
         }

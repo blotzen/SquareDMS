@@ -34,7 +34,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new Document.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] Document document)
+        public async Task<ActionResult<ManipulationResult<Document>>> PostDocumentAsync([FromBody] Document document)
         {
             _logger.Info("Startet creating a new Document");
 
@@ -83,7 +83,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Partial Update of the given Document.
         /// </summary>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchDocumentAsync(int id,
+        public async Task<ActionResult<ManipulationResult<Document>>> PatchDocumentAsync(int id,
             [FromBody] JsonPatchDocument<Document> documentPatch)
         {
             _logger.Info("Startet updating a Document");
@@ -128,7 +128,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Delets a document.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteDocumentAsync(int id)
+        public async Task<ActionResult<ManipulationResult<Document>>> DeleteDocumentAsync(int id)
         {
             _logger.Info("Startet deleting a Document");
 

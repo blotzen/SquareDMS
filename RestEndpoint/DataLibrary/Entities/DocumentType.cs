@@ -9,6 +9,14 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public DocumentType() { }
 
+        /// <summary>
+        /// ManipluationResult
+        /// </summary>
+        public DocumentType(int? id)
+        {
+            Id = id;
+        }
+
         /// <param name="name">Name of document type</param>
         /// <param name="description">optional description</param>
         public DocumentType(string name, string description)

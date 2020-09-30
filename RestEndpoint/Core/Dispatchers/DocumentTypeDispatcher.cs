@@ -21,7 +21,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateDocumentTypeAsync(int userId, DocumentType documentType)
+        public async Task<ManipulationResult<DocumentType>> CreateDocumentTypeAsync(int userId, DocumentType documentType)
         {
             return await _squareDb.CreateDocumentTypeAsync(userId, documentType);
         }
@@ -43,7 +43,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateDocumentTypeAsync(int userId, int id, DocumentType patchedDocumentType)
+        public async Task<ManipulationResult<DocumentType>> UpdateDocumentTypeAsync(int userId, int id, DocumentType patchedDocumentType)
         {
             return await _squareDb.UpdateDocumentTypeAsync(userId, id, patchedDocumentType.Name, patchedDocumentType.Description);
         }
@@ -51,7 +51,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteDocumentTypeAsync(int userId, int id)
+        public async Task<ManipulationResult<DocumentType>> DeleteDocumentTypeAsync(int userId, int id)
         {
             return await _squareDb.DeleteDocumentTypeAsync(userId, id);
         }

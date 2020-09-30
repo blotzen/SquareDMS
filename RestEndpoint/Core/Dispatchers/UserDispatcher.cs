@@ -63,7 +63,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <param name="id">User that creates the user</param>
         /// <param name="user">User to be created</param>
         /// <returns>ManipulationResult with errorCode</returns>
-        public async Task<ManipulationResult> CreateUserAsync(int id, User user)
+        public async Task<ManipulationResult<User>> CreateUserAsync(int id, User user)
         {
             // TODO: also create group when user is created
 
@@ -88,7 +88,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// Updates a user.
         /// </summary>
-        public async Task<ManipulationResult> UpdateUserAsync(int id, int updateUserId, User patchedUser)
+        public async Task<ManipulationResult<User>> UpdateUserAsync(int id, int updateUserId, User patchedUser)
         {
             return await _squareDb.UpdateUserAsync(id, updateUserId,
                 patchedUser.LastName, patchedUser.FirstName, patchedUser.UserName,
@@ -98,7 +98,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// Deletes a user.
         /// </summary>
-        public async Task<ManipulationResult> DeleteUserAsync(int id, int deleteUserId)
+        public async Task<ManipulationResult<User>> DeleteUserAsync(int id, int deleteUserId)
         {
             return await _squareDb.DeleteUserAsync(id, deleteUserId);
         }

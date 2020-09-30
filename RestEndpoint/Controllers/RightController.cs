@@ -32,7 +32,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new Right in the DMS.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostRightAsync([FromBody] Right right)
+        public async Task<ActionResult<ManipulationResult<Right>>> PostRightAsync([FromBody] Right right)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -63,7 +63,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Update the access level of a ressource
         /// </summary>
         [HttpPatch]
-        public async Task<ActionResult<ManipulationResult>> PatchRightAsync([FromQuery] int? groupId,
+        public async Task<ActionResult<ManipulationResult<Right>>> PatchRightAsync([FromQuery] int? groupId,
             [FromQuery] int? documentId, [FromBody] JsonPatchDocument<Right> rightPatch)
         {
             if (rightPatch is null)
@@ -100,7 +100,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Delets a Right.
         /// </summary>
         [HttpDelete]
-        public async Task<ActionResult<ManipulationResult>> DeleteFileFormatAsync([FromQuery] int? groupId,
+        public async Task<ActionResult<ManipulationResult<Right>>> DeleteFileFormatAsync([FromQuery] int? groupId,
             [FromQuery] int? documentId)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();

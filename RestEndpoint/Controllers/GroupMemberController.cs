@@ -31,7 +31,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new GroupMember in the DMS.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostGroupMemberAsync([FromBody] GroupMember groupMember)
+        public async Task<ActionResult<ManipulationResult<GroupMember>>> PostGroupMemberAsync([FromBody] GroupMember groupMember)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -62,7 +62,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Delets a GroupMember.
         /// </summary>
         [HttpDelete]
-        public async Task<ActionResult<ManipulationResult>> DeleteGroupMemberAsync([FromQuery] int? groupId,
+        public async Task<ActionResult<ManipulationResult<GroupMember>>> DeleteGroupMemberAsync([FromQuery] int? groupId,
             [FromQuery] int? memberId)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();

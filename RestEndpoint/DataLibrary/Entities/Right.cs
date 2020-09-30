@@ -11,6 +11,15 @@
         public Right() { }
 
         /// <summary>
+        /// ManipulationResult
+        /// </summary>
+        public Right(int? groupId, int? docId)
+        {
+            GroupId = groupId;
+            DocumentId = docId;
+        }
+
+        /// <summary>
         /// Creates a right with a given access level.
         /// </summary>
         /// <param name="groupId">Id of group</param>

@@ -12,6 +12,14 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public Group() { }
 
+        /// <summary>
+        /// ManipulationResult
+        /// </summary>
+        public Group(int? id)
+        {
+            Id = id;
+        }
+
         /// <param name="admin">If its admin group</param>
         /// <param name="creator">If its creator group</param>
         public Group(string name, string description, bool admin = false, bool creator = false)

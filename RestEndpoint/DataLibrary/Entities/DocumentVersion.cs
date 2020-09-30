@@ -12,13 +12,22 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public DocumentVersion() { }
 
+        /// <summary>
+        /// ManipulationResult
+        /// </summary>
+        /// <param name="id"></param>
+        public DocumentVersion(int? id)
+        {
+            Id = id;
+        }
+
         public DocumentVersion(int docId, int fileFormatId)
         {
             DocumentId = docId;
             FileFormatId = fileFormatId;
         }
 
-        public int Id { get; private set; }
+        public int? Id { get; private set; }
 
         public int DocumentId { get; set; }
 

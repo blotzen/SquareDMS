@@ -61,7 +61,7 @@ namespace SquareDMS.DatabaseAccess
         /// <returns>Result contains an Errorcode that is 0 if the operation
         /// succeeded.</returns>
         /// <exception cref="ArgumentNullException">Doc cant be null.</exception>
-        public async Task<ManipulationResult> CreateDocumentAsync(int userId, Document doc)
+        public async Task<ManipulationResult<Document>> CreateDocumentAsync(int userId, Document doc)
         {
             if (doc is null)
                 throw new ArgumentNullException("doc", "Cant create null document.");
@@ -78,6 +78,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdDocuments", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -87,10 +88,12 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdDocuments = parameters.Get<int>("createdDocuments");
+            var createdId = parameters.Get<int?>("createdId");
 
             _logger.Debug("User: {0} created new Document in the Database", userId);
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Document), createdDocuments, OperationType.Create));
+            return new ManipulationResult<Document>(errorCode, new Document(createdId),
+                new Operation(typeof(Document), createdDocuments, OperationType.Create));
         }
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a document. Locked doc can only be updated by the creator. An empty doc name is not permitted.
         /// </summary>
         /// <returns></returns>
-        public async Task<ManipulationResult> UpdateDocumentAsync(int userId, int docId, [Optional] int? docType,
+        public async Task<ManipulationResult<Document>> UpdateDocumentAsync(int userId, int docId, [Optional] int? docType,
             [Optional] string name, [Optional] bool? locked, [Optional] bool? discard)
         {
             _logger.Debug("User: {0} updates a Document (DocId: {1}) in the Database", userId, docId);
@@ -162,7 +165,8 @@ namespace SquareDMS.DatabaseAccess
 
             _logger.Debug("User: {0} updated a Document (DocId: {1}) in the Database", userId, docId);
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Document), updatedDocuments, OperationType.Update));
+            return new ManipulationResult<Document>(errorCode, new Document(docId),
+                new Operation(typeof(Document), updatedDocuments, OperationType.Update));
         }
 
         /// <summary>
@@ -176,7 +180,7 @@ namespace SquareDMS.DatabaseAccess
         /// the amount of deleted document-versions and 
         /// and an Errorcode that is 0 if the operation
         /// succeeded.</returns>
-        public async Task<ManipulationResult> DeleteDocumentAsync(int userId, int docId)
+        public async Task<ManipulationResult<Document>> DeleteDocumentAsync(int userId, int docId)
         {
             _logger.Debug("User: {0} deletes a Document (DocId: {1}) in the Database", userId, docId);
 
@@ -203,7 +207,8 @@ namespace SquareDMS.DatabaseAccess
 
             _logger.Debug("User: {0} deleted a Document (DocId: {1}) in the Database", userId, docId);
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Right), deletedRights, OperationType.Delete),
+            return new ManipulationResult<Document>(errorCode, new Document(docId),
+                new Operation(typeof(Right), deletedRights, OperationType.Delete),
                 new Operation(typeof(DocumentVersion), deletedDocVersions, OperationType.Delete),
                 new Operation(typeof(Document), deletedDocuments, OperationType.Delete));
         }
@@ -217,7 +222,7 @@ namespace SquareDMS.DatabaseAccess
         /// <param name="description"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">DocType cant be null.</exception>
-        public async Task<ManipulationResult> CreateDocumentTypeAsync(int userId, DocumentType docType)
+        public async Task<ManipulationResult<DocumentType>> CreateDocumentTypeAsync(int userId, DocumentType docType)
         {
             if (docType is null)
                 throw new ArgumentNullException("docType", "Cant create null docType.");
@@ -230,6 +235,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdDocumentTypes", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -239,8 +245,10 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdDocumentTypes = parameters.Get<int>("createdDocumentTypes");
+            var createdId = parameters.Get<int?>("createdId");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(DocumentType), createdDocumentTypes, OperationType.Create));
+            return new ManipulationResult<DocumentType>(errorCode, new DocumentType(createdId),
+                new Operation(typeof(DocumentType), createdDocumentTypes, OperationType.Create));
         }
 
         /// <summary>
@@ -276,7 +284,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a Document Type. Only admin can update.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> UpdateDocumentTypeAsync(int userId, int docTypeId,
+        public async Task<ManipulationResult<DocumentType>> UpdateDocumentTypeAsync(int userId, int docTypeId,
             [Optional] string name, [Optional] string description)
         {
             DynamicParameters parameters = new DynamicParameters();
@@ -298,7 +306,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var updatedDocumentTypes = parameters.Get<int>("updatedDocumentTypes");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(DocumentType), updatedDocumentTypes, OperationType.Update));
+            return new ManipulationResult<DocumentType>(errorCode, new DocumentType(docTypeId),
+                new Operation(typeof(DocumentType), updatedDocumentTypes, OperationType.Update));
         }
 
         /// <summary>
@@ -306,7 +315,7 @@ namespace SquareDMS.DatabaseAccess
         /// if no document uses the type currently.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteDocumentTypeAsync(int userId, int docTypeId)
+        public async Task<ManipulationResult<DocumentType>> DeleteDocumentTypeAsync(int userId, int docTypeId)
         {
             DynamicParameters parameters = new DynamicParameters();
 
@@ -324,7 +333,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var deletedDocumentTypes = parameters.Get<int>("deletedDocumentTypes");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(DocumentType), deletedDocumentTypes, OperationType.Delete));
+            return new ManipulationResult<DocumentType>(errorCode, new DocumentType(docTypeId),
+                new Operation(typeof(DocumentType), deletedDocumentTypes, OperationType.Delete));
         }
         #endregion
 
@@ -335,7 +345,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Return value with error Code</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<ManipulationResult> CreateDocumentVersionAsync(int userId, DocumentVersion docVersion)
+        public async Task<ManipulationResult<DocumentVersion>> CreateDocumentVersionAsync(int userId, DocumentVersion docVersion)
         {
             if (docVersion is null)
                 throw new ArgumentNullException("docVersion", "Cant create null docVersion");
@@ -399,8 +409,8 @@ namespace SquareDMS.DatabaseAccess
                 }
             }
 
-            var result = new ManipulationResult(errorCode, new Operation(typeof(DocumentVersion), createdDocumentVersions, OperationType.Create));
-            // result.ManipulatedId = createdId; // for next feature: when the payload should be put into the cache after insertion.
+            var result = new ManipulationResult<DocumentVersion>(errorCode, new DocumentVersion(createdId),
+                new Operation(typeof(DocumentVersion), createdDocumentVersions, OperationType.Create));
 
             return result;
         }
@@ -539,7 +549,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Return value with error Code</returns>
         /// <exception cref="ArgumentNullException">FileFormat cant be null.</exception>
-        public async Task<ManipulationResult> CreateFileFormatAsync(int userId, FileFormat fileFormat)
+        public async Task<ManipulationResult<FileFormat>> CreateFileFormatAsync(int userId, FileFormat fileFormat)
         {
             if (fileFormat is null)
                 throw new ArgumentNullException("fileFormat", "Cant create null fileFormat.");
@@ -552,6 +562,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdFileFormats", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -561,8 +572,10 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdFileFormats = parameters.Get<int>("createdFileFormats");
+            var createdId = parameters.Get<int?>("createdId");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(FileFormat), createdFileFormats, OperationType.Create));
+            return new ManipulationResult<FileFormat>(errorCode, new FileFormat(createdId),
+                new Operation(typeof(FileFormat), createdFileFormats, OperationType.Create));
         }
 
         /// <summary>
@@ -596,7 +609,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a FileFromat if the user is admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> UpdateFileFormatAsync(int userId, int fileFormatId,
+        public async Task<ManipulationResult<FileFormat>> UpdateFileFormatAsync(int userId, int fileFormatId,
             [Optional] string extension, [Optional] string description)
         {
             DynamicParameters parameters = new DynamicParameters();
@@ -618,14 +631,15 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var updatedFileFormats = parameters.Get<int>("updatedFileFormats");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(FileFormat), updatedFileFormats, OperationType.Update));
+            return new ManipulationResult<FileFormat>(errorCode, new FileFormat(fileFormatId),
+                new Operation(typeof(FileFormat), updatedFileFormats, OperationType.Update));
         }
 
         /// <summary>
         /// Deletes a file format, file format cant be used by any doc version.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteFileFormatAsync(int userId, int fileFormatId)
+        public async Task<ManipulationResult<FileFormat>> DeleteFileFormatAsync(int userId, int fileFormatId)
         {
             DynamicParameters parameters = new DynamicParameters();
 
@@ -644,7 +658,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var deletedFileFormats = parameters.Get<int>("deletedFileFormats");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(FileFormat), deletedFileFormats, OperationType.Delete));
+            return new ManipulationResult<FileFormat>(errorCode, new FileFormat(fileFormatId),
+                new Operation(typeof(FileFormat), deletedFileFormats, OperationType.Delete));
         }
         #endregion
 
@@ -654,7 +669,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Group cant be null.</exception>
-        public async Task<ManipulationResult> CreateGroupAsync(int userId, Group group)
+        public async Task<ManipulationResult<Group>> CreateGroupAsync(int userId, Group group)
         {
             if (group is null)
                 throw new ArgumentNullException("group", "Cant create null group.");
@@ -669,6 +684,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdGroups", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -678,8 +694,10 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdGroups = parameters.Get<int>("createdGroups");
+            var createdId = parameters.Get<int?>("createdId");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Group), createdGroups, OperationType.Create));
+            return new ManipulationResult<Group>(errorCode, new Group(createdId),
+                new Operation(typeof(Group), createdGroups, OperationType.Create));
         }
 
         /// <summary>
@@ -717,7 +735,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a group. User has to be admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> UpdateGroupAsync(int userId, int groupId, [Optional] string name,
+        public async Task<ManipulationResult<Group>> UpdateGroupAsync(int userId, int groupId, [Optional] string name,
             [Optional] string description, [Optional] bool? admin, [Optional] bool? creator)
         {
             DynamicParameters parameters = new DynamicParameters();
@@ -741,7 +759,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var manipulatedGroups = parameters.Get<int>("updatedGroups");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Group), manipulatedGroups, OperationType.Update));
+            return new ManipulationResult<Group>(errorCode, new Group(groupId),
+                new Operation(typeof(Group), manipulatedGroups, OperationType.Update));
         }
 
         /// <summary>
@@ -749,7 +768,7 @@ namespace SquareDMS.DatabaseAccess
         /// Only Admins can delete Groups.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteGroupAsync(int userId, int groupId)
+        public async Task<ManipulationResult<Group>> DeleteGroupAsync(int userId, int groupId)
         {
             DynamicParameters parameters = new DynamicParameters();
 
@@ -770,7 +789,7 @@ namespace SquareDMS.DatabaseAccess
             var deletedRights = parameters.Get<int>("deletedRights");
             var deletedGroups = parameters.Get<int>("deletedGroups");    // either 1 or 0, cant delete multiple groups
 
-            return new ManipulationResult(errorCode,
+            return new ManipulationResult<Group>(errorCode, new Group(groupId),
                 new Operation(typeof(Right), deletedRights, OperationType.Delete),
                 new Operation(typeof(Group), deletedGroups, OperationType.Delete));
         }
@@ -783,7 +802,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">GroupMember cant be null.</exception>
-        public async Task<ManipulationResult> CreateGroupMemberAsync(int userId, GroupMember groupMember)
+        public async Task<ManipulationResult<GroupMember>> CreateGroupMemberAsync(int userId, GroupMember groupMember)
         {
             if (groupMember is null)
                 throw new ArgumentNullException("groupMember", "Cant create null groupMember.");
@@ -796,6 +815,8 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdGroupMembers", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdGroupId", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdMemberId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -805,8 +826,11 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdGroupMembers = parameters.Get<int>("createdGroupMembers");
+            var createdGroupId = parameters.Get<int?>("createdGroupId");
+            var createdMemberId = parameters.Get<int?>("createdMemberId");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(GroupMember), createdGroupMembers, OperationType.Create));
+            return new ManipulationResult<GroupMember>(errorCode, new GroupMember(createdGroupId, createdMemberId),
+                new Operation(typeof(GroupMember), createdGroupMembers, OperationType.Create));
         }
 
         /// <summary>
@@ -841,7 +865,7 @@ namespace SquareDMS.DatabaseAccess
         /// Deletes a group Member if the user is admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteGroupMemberAsync(int userId, int groupId, int memberId)
+        public async Task<ManipulationResult<GroupMember>> DeleteGroupMemberAsync(int userId, int groupId, int memberId)
         {
             DynamicParameters parameters = new DynamicParameters();
 
@@ -861,7 +885,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var deletedGroupMembers = parameters.Get<int>("deletedGroupMembers");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(GroupMember), deletedGroupMembers, OperationType.Delete));
+            return new ManipulationResult<GroupMember>(errorCode, new GroupMember(groupId, memberId),
+                new Operation(typeof(GroupMember), deletedGroupMembers, OperationType.Delete));
         }
         #endregion
 
@@ -874,7 +899,7 @@ namespace SquareDMS.DatabaseAccess
         /// <param name="right">Right to be created</param>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">Right cant be null.</exception>
-        public async Task<ManipulationResult> CreateRightAsync(int userId, Right right)
+        public async Task<ManipulationResult<Right>> CreateRightAsync(int userId, Right right)
         {
             if (right is null)
                 throw new ArgumentNullException("right", "Cant create null right.");
@@ -888,6 +913,8 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdRights", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdGroupId", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdDocId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -897,8 +924,11 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdRights = parameters.Get<int>("createdRights");
+            var createdGroupId = parameters.Get<int?>("createdGroupId");
+            var createdDocId = parameters.Get<int?>("createdDocId");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Right), createdRights, OperationType.Create));
+            return new ManipulationResult<Right>(errorCode, new Right(createdGroupId, createdDocId),
+                new Operation(typeof(Right), createdRights, OperationType.Create));
         }
 
         /// <summary>
@@ -931,7 +961,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a Right. Right has to exist and user has to be Admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId,
+        public async Task<ManipulationResult<Right>> UpdateRightAsync(int userId, int groupId,
             int docId, AccessLevel accessLevel)
         {
             DynamicParameters parameters = new DynamicParameters();
@@ -953,14 +983,15 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var updatedRights = parameters.Get<int>("updatedRights");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Right), updatedRights, OperationType.Update));
+            return new ManipulationResult<Right>(errorCode, new Right(groupId, docId),
+                new Operation(typeof(Right), updatedRights, OperationType.Update));
         }
 
         /// <summary>
         /// Deletes one or more Rights. User has to be Admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteRightsAsync(int userId, int groupId, int docId)
+        public async Task<ManipulationResult<Right>> DeleteRightsAsync(int userId, int groupId, int docId)
         {
             DynamicParameters parameters = new DynamicParameters();
 
@@ -980,7 +1011,8 @@ namespace SquareDMS.DatabaseAccess
             var errorCode = parameters.Get<int>("errorCode");
             var deletedRights = parameters.Get<int>("deletedRights");
 
-            return new ManipulationResult(errorCode, new Operation(typeof(Right), deletedRights, OperationType.Delete));
+            return new ManipulationResult<Right>(errorCode, new Right(groupId, docId),
+                new Operation(typeof(Right), deletedRights, OperationType.Delete));
         }
         #endregion
 
@@ -990,7 +1022,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">Right cant be null.</exception>
-        public async Task<ManipulationResult> CreateUserAsync(int userId, User user)
+        public async Task<ManipulationResult<User>> CreateUserAsync(int userId, User user)
         {
             if (user is null)
                 throw new ArgumentNullException("user", "Cant create null user.");
@@ -1009,6 +1041,7 @@ namespace SquareDMS.DatabaseAccess
 
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdUsers", DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -1018,10 +1051,12 @@ namespace SquareDMS.DatabaseAccess
 
             var errorCode = parameters.Get<int>("errorCode");
             var createdUsers = parameters.Get<int>("createdUsers");
+            var createdId = parameters.Get<int?>("createdId");
 
             _logger.Debug("Created new User in the Database; ErrorCode: {0}", errorCode);
 
-            return new ManipulationResult(errorCode, new Operation(typeof(User), createdUsers, OperationType.Create));
+            return new ManipulationResult<User>(errorCode, new User(createdId),
+                new Operation(typeof(User), createdUsers, OperationType.Create));
         }
 
         /// <summary>
@@ -1098,7 +1133,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a user given by the parameters.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
+        public async Task<ManipulationResult<User>> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
             [Optional] string firstName, [Optional] string userName, [Optional] string email,
             [Optional] byte[] passwordHash, [Optional] bool? active)
         {
@@ -1129,7 +1164,8 @@ namespace SquareDMS.DatabaseAccess
 
             _logger.Debug("User updated; ErrorCode: {0}", errorCode);
 
-            return new ManipulationResult(errorCode, new Operation(typeof(User), updatedUsers, OperationType.Update));
+            return new ManipulationResult<User>(errorCode, new User(updateUserId),
+                new Operation(typeof(User), updatedUsers, OperationType.Update));
         }
 
         /// <summary>
@@ -1137,7 +1173,7 @@ namespace SquareDMS.DatabaseAccess
         /// the user did not create any documents.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        public async Task<ManipulationResult> DeleteUserAsync(int userId, int deleteUserId)
+        public async Task<ManipulationResult<User>> DeleteUserAsync(int userId, int deleteUserId)
         {
             _logger.Debug("User {0} deletes User with UserId from Database: {0}", userId, deleteUserId);
 
@@ -1162,7 +1198,7 @@ namespace SquareDMS.DatabaseAccess
 
             _logger.Debug("User deleted from Database; ErrorCode: {0}", errorCode);
 
-            return new ManipulationResult(errorCode,
+            return new ManipulationResult<User>(errorCode, new User(deleteUserId),
                 new Operation(typeof(GroupMember), deletedGroupMembers, OperationType.Delete),
                 new Operation(typeof(User), deletedUsers, OperationType.Delete));
         }

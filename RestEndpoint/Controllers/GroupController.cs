@@ -31,7 +31,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new Group.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostGroupAsync([FromBody] Group group)
+        public async Task<ActionResult<ManipulationResult<Group>>> PostGroupAsync([FromBody] Group group)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -66,7 +66,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Partial Update of the given Group.
         /// </summary>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchGroupAsync(int id,
+        public async Task<ActionResult<ManipulationResult<Group>>> PatchGroupAsync(int id,
             [FromBody] JsonPatchDocument<Group> groupPatch)
         {
             if (groupPatch is null)
@@ -98,7 +98,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// 
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteGroupAsync(int id)
+        public async Task<ActionResult<ManipulationResult<Group>>> DeleteGroupAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 

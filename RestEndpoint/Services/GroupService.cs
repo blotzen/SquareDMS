@@ -21,7 +21,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateGroupAsync(int userId, Group group)
+        public async Task<ManipulationResult<Group>> CreateGroupAsync(int userId, Group group)
         {
             return await _groupDispatcher.CreateGroupAsync(userId, group);
         }
@@ -38,7 +38,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateGroupAsync(int userId, int id, Group patchedGroup)
+        public async Task<ManipulationResult<Group>> UpdateGroupAsync(int userId, int id, Group patchedGroup)
         {
             if (patchedGroup.Id is null)
             {
@@ -51,7 +51,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteGroupAsync(int userId, int id)
+        public async Task<ManipulationResult<Group>> DeleteGroupAsync(int userId, int id)
         {
             return await _groupDispatcher.DeleteGroupAsync(userId, id);
         }

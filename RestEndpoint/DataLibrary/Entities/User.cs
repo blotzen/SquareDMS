@@ -10,6 +10,14 @@ namespace SquareDMS.DataLibrary.Entities
         public User() { }
 
         /// <summary>
+        /// ManipulationResult
+        /// </summary>
+        public User(int? id)
+        {
+            Id = id;
+        }
+
+        /// <summary>
         /// Creates a new user
         /// </summary>
         public User(string lastName, string firstName, string userName,

@@ -33,7 +33,7 @@ namespace SquareDMS.Core.Dispatchers
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateDocumentVersionAsync(int userId, DocumentVersion documentVersion)
+        public async Task<ManipulationResult<DocumentVersion>> CreateDocumentVersionAsync(int userId, DocumentVersion documentVersion)
         {
             return await _squareDb.CreateDocumentVersionAsync(userId, documentVersion);
         }
@@ -82,7 +82,7 @@ namespace SquareDMS.Core.Dispatchers
 
             try
             {
-                payload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id);
+                payload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id.Value);
             }
             catch (Exception ex)
             {
@@ -93,13 +93,13 @@ namespace SquareDMS.Core.Dispatchers
             if (payload is null)
             {
                 // fetch from filestream via db and set to rawFile property (byte[])
-                var filestreamRetrieve = await _squareDb.RetrieveDocumentVersionAsync(userId, retrievedDocumentVersion.Id);
+                var filestreamRetrieve = await _squareDb.RetrieveDocumentVersionAsync(userId, retrievedDocumentVersion.Id.Value);
                 payload = filestreamRetrieve.Resultset.FirstOrDefault()?.RawFile;
 
                 try
                 {
                     // populate the cache
-                    await _squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id, payload);
+                    await _squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id.Value, payload);
                 }
                 catch (Exception ex)
                 {

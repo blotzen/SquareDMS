@@ -9,6 +9,14 @@ namespace SquareDMS.DataLibrary.Entities
         /// </summary>
         public FileFormat() { }
 
+        /// <summary>
+        /// ManipulationResult
+        /// </summary>
+        public FileFormat(int? id)
+        {
+            Id = id;
+        }
+
         public FileFormat(string extension, string description)
         {
             Extension = extension;

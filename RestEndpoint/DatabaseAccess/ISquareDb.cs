@@ -22,7 +22,7 @@ namespace SquareDMS.DatabaseAccess
         /// <returns>Result contains an Errorcode that is 0 if the operation
         /// succeeded.</returns>
         /// <exception cref="ArgumentNullException">Doc cant be null.</exception>
-        Task<ManipulationResult> CreateDocumentAsync(int userId, Document doc);
+        Task<ManipulationResult<Document>> CreateDocumentAsync(int userId, Document doc);
 
         /// <summary>
         /// Gets a document or multiple documents, depending on the given paramters.
@@ -36,7 +36,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a document. Locked doc can only be updated by the creator. An empty doc name is not permitted.
         /// </summary>
         /// <returns></returns>
-        Task<ManipulationResult> UpdateDocumentAsync(int userId, int docId, [Optional] int? docType,
+        Task<ManipulationResult<Document>> UpdateDocumentAsync(int userId, int docId, [Optional] int? docType,
             [Optional] string name, [Optional] bool? locked, [Optional] bool? discard);
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace SquareDMS.DatabaseAccess
         /// the amount of deleted document-versions and 
         /// and an Errorcode that is 0 if the operation
         /// succeeded.</returns>
-        Task<ManipulationResult> DeleteDocumentAsync(int userId, int docId);
+        Task<ManipulationResult<Document>> DeleteDocumentAsync(int userId, int docId);
         #endregion
 
         #region DocumentType-Operations
@@ -61,7 +61,7 @@ namespace SquareDMS.DatabaseAccess
         /// <param name="description"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">DocType cant be null.</exception>
-        Task<ManipulationResult> CreateDocumentTypeAsync(int userId, DocumentType docType);
+        Task<ManipulationResult<DocumentType>> CreateDocumentTypeAsync(int userId, DocumentType docType);
 
         /// <summary>
         /// Gets one or multiple DocumentTypes depending on the param config.
@@ -75,7 +75,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a Document Type. Only admin can update.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> UpdateDocumentTypeAsync(int userId, int docTypeId,
+        Task<ManipulationResult<DocumentType>> UpdateDocumentTypeAsync(int userId, int docTypeId,
            [Optional] string name, [Optional] string description);
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace SquareDMS.DatabaseAccess
         /// if no document uses the type currently.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteDocumentTypeAsync(int userId, int docTypeId);
+        Task<ManipulationResult<DocumentType>> DeleteDocumentTypeAsync(int userId, int docTypeId);
         #endregion
 
         #region DocumentVersion-Operations
@@ -93,7 +93,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Return value with error Code</returns>
         /// <exception cref="Exception"></exception>
-        Task<ManipulationResult> CreateDocumentVersionAsync(int userId, DocumentVersion docVersion);
+        Task<ManipulationResult<DocumentVersion>> CreateDocumentVersionAsync(int userId, DocumentVersion docVersion);
 
         /// <summary>
         /// Gets a specific document version metadata.
@@ -115,7 +115,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Return value with error Code</returns>
         /// <exception cref="ArgumentNullException">FileFormat cant be null.</exception>
-        Task<ManipulationResult> CreateFileFormatAsync(int userId, FileFormat fileFormat);
+        Task<ManipulationResult<FileFormat>> CreateFileFormatAsync(int userId, FileFormat fileFormat);
 
         /// <summary>
         /// Gets one or multiple FileFormats depending on the paramters.
@@ -128,14 +128,14 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a FileFromat if the user is admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> UpdateFileFormatAsync(int userId, int fileFormatId,
+        Task<ManipulationResult<FileFormat>> UpdateFileFormatAsync(int userId, int fileFormatId,
            [Optional] string extension, [Optional] string description);
 
         /// <summary>
         /// Deletes a file format, file format cant be used by any doc version.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteFileFormatAsync(int userId, int fileFormatId);
+        Task<ManipulationResult<FileFormat>> DeleteFileFormatAsync(int userId, int fileFormatId);
         #endregion
 
         #region Group-Operations
@@ -144,7 +144,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Group cant be null.</exception>
-        Task<ManipulationResult> CreateGroupAsync(int userId, Group group);
+        Task<ManipulationResult<Group>> CreateGroupAsync(int userId, Group group);
 
         /// <summary>
         /// Gets one or multiple Groups depending on the given params.
@@ -157,7 +157,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a group. User has to be admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> UpdateGroupAsync(int userId, int groupId, [Optional] string name,
+        Task<ManipulationResult<Group>> UpdateGroupAsync(int userId, int groupId, [Optional] string name,
            [Optional] string description, [Optional] bool? admin, [Optional] bool? creator);
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace SquareDMS.DatabaseAccess
         /// Only Admins can delete Groups.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteGroupAsync(int userId, int groupId);
+        Task<ManipulationResult<Group>> DeleteGroupAsync(int userId, int groupId);
         #endregion
 
         #region GroupMember-Operations
@@ -175,7 +175,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">GroupMember cant be null.</exception>
-        Task<ManipulationResult> CreateGroupMemberAsync(int userId, GroupMember groupMember);
+        Task<ManipulationResult<GroupMember>> CreateGroupMemberAsync(int userId, GroupMember groupMember);
 
         /// <summary>
         /// Gets one or more Group Members depending on the given paramters.
@@ -188,7 +188,7 @@ namespace SquareDMS.DatabaseAccess
         /// Deletes a group Member if the user is admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteGroupMemberAsync(int userId, int groupId, int memberId);
+        Task<ManipulationResult<GroupMember>> DeleteGroupMemberAsync(int userId, int groupId, int memberId);
         #endregion
 
         #region Right-Operations
@@ -200,7 +200,7 @@ namespace SquareDMS.DatabaseAccess
         /// <param name="right">Right to be created</param>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">Right cant be null.</exception>
-        Task<ManipulationResult> CreateRightAsync(int userId, Right right);
+        Task<ManipulationResult<Right>> CreateRightAsync(int userId, Right right);
 
         /// <summary>
         /// Gets one or more Rights depending on the given params.
@@ -213,14 +213,14 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a Right. Right has to exist and user has to be Admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> UpdateRightAsync(int userId, int groupId,
+        Task<ManipulationResult<Right>> UpdateRightAsync(int userId, int groupId,
            int docId, AccessLevel accessLevel);
 
         /// <summary>
         /// Deletes one or more Rights. User has to be Admin.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteRightsAsync(int userId, int groupId, int docId);
+        Task<ManipulationResult<Right>> DeleteRightsAsync(int userId, int groupId, int docId);
         #endregion
 
         #region User-Operations
@@ -229,7 +229,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         /// <exception cref="ArgumentNullException">Right cant be null.</exception>
-        Task<ManipulationResult> CreateUserAsync(int userId, User user);
+        Task<ManipulationResult<User>> CreateUserAsync(int userId, User user);
 
         /// <summary>
         /// Gets one or multiple users depending on the paramters. If user 
@@ -253,7 +253,7 @@ namespace SquareDMS.DatabaseAccess
         /// Updates a user given by the parameters.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
+        Task<ManipulationResult<User>> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
            [Optional] string firstName, [Optional] string userName, [Optional] string email,
            [Optional] byte[] passwordHash, [Optional] bool? active);
 
@@ -262,7 +262,7 @@ namespace SquareDMS.DatabaseAccess
         /// the user did not create any documents.
         /// </summary>
         /// <returns>Result with errorCode.</returns>
-        Task<ManipulationResult> DeleteUserAsync(int userId, int deleteUserId);
+        Task<ManipulationResult<User>> DeleteUserAsync(int userId, int deleteUserId);
         #endregion
 
         #region System-Operations

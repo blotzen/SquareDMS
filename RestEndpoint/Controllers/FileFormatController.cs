@@ -33,7 +33,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new FileFormat in the DMS.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostFileFormatAsync([FromBody] FileFormat fileFormat)
+        public async Task<ActionResult<ManipulationResult<FileFormat>>> PostFileFormatAsync([FromBody] FileFormat fileFormat)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -67,7 +67,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Partial Update of the given FileFormat.
         /// </summary>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchFileFormatAsync(int id,
+        public async Task<ActionResult<ManipulationResult<FileFormat>>> PatchFileFormatAsync(int id,
             [FromBody] JsonPatchDocument<FileFormat> fileFormatPatch)
         {
             if (fileFormatPatch is null)
@@ -99,7 +99,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Delets a fileFormat.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteFileFormatAsync(int id)
+        public async Task<ActionResult<ManipulationResult<FileFormat>>> DeleteFileFormatAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 

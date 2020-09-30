@@ -21,7 +21,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateRightAsync(int userId, Right right)
+        public async Task<ManipulationResult<Right>> CreateRightAsync(int userId, Right right)
         {
             return await _rightDispatcher.CreateRightAsync(userId, right);
         }
@@ -37,7 +37,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateRightAsync(int userId, int groupId, int docId,
+        public async Task<ManipulationResult<Right>> UpdateRightAsync(int userId, int groupId, int docId,
             Right patchedRight)
         {
             // checks if the patch is applied only to editable attributes
@@ -52,7 +52,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteRightAsync(int userId, int groupId, int docId)
+        public async Task<ManipulationResult<Right>> DeleteRightAsync(int userId, int groupId, int docId)
         {
             return await _rightDispatcher.DeleteRightAsync(userId, groupId, docId);
         }

@@ -33,7 +33,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new DocumentVersion in the DMS. Uses Streaming.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostDocumentVersionAsync([FromForm] DocumentVersion documentVersion)
+        public async Task<ActionResult<ManipulationResult<DocumentVersion>>> PostDocumentVersionAsync([FromForm] DocumentVersion documentVersion)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 

@@ -25,7 +25,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> CreateDocumentTypeAsync(int userId, DocumentType documentType)
+        public async Task<ManipulationResult<DocumentType>> CreateDocumentTypeAsync(int userId, DocumentType documentType)
         {
             return await _documentTypeDispatcher.CreateDocumentTypeAsync(userId, documentType);
         }
@@ -42,7 +42,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> UpdateDocumentTypeAsync(int userId, int id, DocumentType patchedDocumentType)
+        public async Task<ManipulationResult<DocumentType>> UpdateDocumentTypeAsync(int userId, int id, DocumentType patchedDocumentType)
         {
             if (patchedDocumentType.Id is null)
             {
@@ -55,7 +55,7 @@ namespace SquareDMS.Services
         /// <summary>
         /// 
         /// </summary>
-        public async Task<ManipulationResult> DeleteDocumentTypeAsync(int userId, int id)
+        public async Task<ManipulationResult<DocumentType>> DeleteDocumentTypeAsync(int userId, int id)
         {
             return await _documentTypeDispatcher.DeleteDocumentTypeAsync(userId, id);
         }

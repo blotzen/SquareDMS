@@ -31,7 +31,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Creates a new DocumentType.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<ManipulationResult>> PostDocumentAsync([FromBody] DocumentType documentType)
+        public async Task<ActionResult<ManipulationResult<DocumentType>>> PostDocumentAsync([FromBody] DocumentType documentType)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
@@ -66,7 +66,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ManipulationResult>> PatchDocumentTypeAsync(int id,
+        public async Task<ActionResult<ManipulationResult<DocumentType>>> PatchDocumentTypeAsync(int id,
             [FromBody] JsonPatchDocument<DocumentType> documentTypePatch)
         {
             if (documentTypePatch is null)
@@ -98,7 +98,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// 
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ManipulationResult>> DeleteDocumentTypeAsync(int id)
+        public async Task<ActionResult<ManipulationResult<DocumentType>>> DeleteDocumentTypeAsync(int id)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 
