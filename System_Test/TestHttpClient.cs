@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace SquareDMS.System_Test
 {
-    public abstract class SystemTest
+    public abstract class TestHttpClient
     {
         /// <summary>
         /// Creates intstance of the httpClient and the web app
         /// </summary>
-        public SystemTest()
+        public TestHttpClient()
         {
             var appFactory = new WebApplicationFactory<SquareDMS.RestEndpoint.Startup>();
             TestClient = appFactory.CreateClient();
@@ -35,18 +35,26 @@ namespace SquareDMS.System_Test
         /// Does a POST Operation (ManipulationResult)
         /// </summary>
         /// <returns>Tuple of HttpStatusCode and ManipulationResult or (null, null) in case of an error</returns>
-        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostAsync<T>(string url, T entity, string jwt) where T : IDataTransferObject
+        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostAsync<T>(string url, T entity,
+            string jwt = null) where T : IDataTransferObject
         {
             var serializedEntity = JsonConvert.SerializeObject(entity);
             var content = new StringContent(serializedEntity, Encoding.UTF8, "application/json");
 
-            TestClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
+            // if a jwt is supplied we set the header
+            if (jwt != null)
+            {
+                TestClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
+            }
 
             var httpResponse = await TestClient.PostAsync(url, content);
 
-            // delete auth header after request was made
-            TestClient.DefaultRequestHeaders.Authorization = null;
+            if (jwt != null)
+            {
+                // delete auth header after request was made
+                TestClient.DefaultRequestHeaders.Authorization = null;
+            }
 
             var serializedManipulationResult = await httpResponse.Content.ReadAsStringAsync();
 
@@ -132,6 +140,7 @@ namespace SquareDMS.System_Test
         /// <summary>
         /// Deserializes a RetrievalResult of type T
         /// </summary>
+        /// <typeparam name="T">Typ der Werte im Result-Set</typeparam>
         private RetrievalResult<T> DeserializeRetrievalResult<T>(string serializedRetrievalResult) where T : IDataTransferObject
         {
             var parsedInput = JObject.Parse(serializedRetrievalResult);

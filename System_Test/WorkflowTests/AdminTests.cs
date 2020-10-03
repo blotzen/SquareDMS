@@ -1,13 +1,12 @@
 ﻿using SquareDMS.DataLibrary.Entities;
 using SquareDMS.RestEndpoint.Authentication;
 using System.Net;
-using System.Net.WebSockets;
 using Xunit;
 
 namespace SquareDMS.System_Test.WorkflowTests
 {
     [Collection("Sequential")]
-    public class AdminTests : SystemTest, IClassFixture<ResetDbFixture>
+    public class AdminTests : TestHttpClient, IClassFixture<ResetDbFixture>
     {
         private readonly ResetDbFixture _clearDbFixture;
 
@@ -77,8 +76,8 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // put new user in the creators group
-            var createGroupMemberResponse = await PostAsync<GroupMember>("api/v1/groupmembers", 
-                new GroupMember(3, createUserPostResult.ManipulatedEntity.Id), 
+            var createGroupMemberResponse = await PostAsync<GroupMember>("api/v1/groupmembers",
+                new GroupMember(3, createUserPostResult.ManipulatedEntity.Id),
                 loginBodyAdmin.Token);
 
             var createGroupMemberStatusCode = createGroupMemberResponse.Item1;
@@ -104,7 +103,8 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // login new user
-            var loginResponseCreator = await PostLoginAsync("api/v1/users/login", new Request() { 
+            var loginResponseCreator = await PostLoginAsync("api/v1/users/login", new Request()
+            {
                 UserName = _user.UserName,
                 Password = _user.Password
             });
@@ -125,7 +125,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // retrieve created document as created user
-            var retrieveDocumentResponse = await GetAsync<Document>(@$"api/v1/documents?docId={createDocumentPostResult.ManipulatedEntity.Id.Value}", 
+            var retrieveDocumentResponse = await GetAsync<Document>(@$"api/v1/documents?docId={createDocumentPostResult.ManipulatedEntity.Id.Value}",
                 loginBodyCreator.Token);
 
             var retrievedDocumentStatusCode = retrieveDocumentResponse.Item1;
