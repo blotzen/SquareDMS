@@ -24,7 +24,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
         [Fact]
         public async void Admin_UpdateUser_Username()
         {
-            var updationResult = await _squareDbMsSql.UpdateUserAsync(1, 2, userName: "Django");
+            var updationResult = await _squareDbMsSql.UpdateUserAsync(1, 2, lastName: "Django");
 
             Assert.Equal(0, updationResult.ErrorCode);
             Assert.Equal(1, updationResult.ManipulatedAmount(typeof(User), OperationType.Update));
@@ -36,7 +36,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
         [Fact]
         public async void User_UpdateOtherUser()
         {
-            var updationResult = await _squareDbMsSql.UpdateUserAsync(2, 3, userName: "Django");
+            var updationResult = await _squareDbMsSql.UpdateUserAsync(2, 3, lastName: "Django");
 
             Assert.Equal(15, updationResult.ErrorCode);
             Assert.Equal(0, updationResult.ManipulatedAmount(typeof(User), OperationType.Update));
@@ -48,7 +48,7 @@ namespace SquareDMS.DatabaseAccess_Tests.UserTests
         [Fact]
         public async void User_UpdateHimself()
         {
-            var updationResult = await _squareDbMsSql.UpdateUserAsync(2, 2, userName: "Django");
+            var updationResult = await _squareDbMsSql.UpdateUserAsync(2, 2, lastName: "Django");
 
             Assert.Equal(0, updationResult.ErrorCode);
             Assert.Equal(1, updationResult.ManipulatedAmount(typeof(User), OperationType.Update));

@@ -1,7 +1,9 @@
-﻿using SquareDMS.DataLibrary.Entities;
+﻿using SquareDMS.DatabaseAccess;
+using SquareDMS.DataLibrary.Entities;
 using SquareDMS.RestEndpoint.Authentication;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,6 +15,7 @@ namespace SquareDMS.System_Test.WorkflowTests
     [Collection("Sequential")]
     public class LoadTest : TestHttpClient, IClassFixture<ResetDbFixture>
     {
+        private readonly SquareDbMsSql _squareDbMsSql = new SquareDbMsSql(Globals.SqlConnectionstring);
         private readonly ResetDbFixture _clearDbFixture;
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace SquareDMS.System_Test.WorkflowTests
                          FirstName = "Günter",
                          UserName = $"user_{i}",
                          Password = "sehrnice123",
-                         Active = true
+                         Active = false
                      });
                  }));
             }
@@ -77,7 +80,9 @@ namespace SquareDMS.System_Test.WorkflowTests
 
             sw.Stop();
 
-            Assert.True(sw.ElapsedMilliseconds < 10_000);
+            var retrievedInactiveUsers = await _squareDbMsSql.RetrieveUserAsync(1, active: false);
+
+            Assert.Equal(100, retrievedInactiveUsers.Resultset.Count());
         }
 
         private async Task<string> LoginAdmin(Request adminLoginRequest)

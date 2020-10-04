@@ -254,7 +254,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         Task<ManipulationResult<User>> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
-           [Optional] string firstName, [Optional] string userName, [Optional] string email,
+           [Optional] string firstName, [Optional] string email,
            [Optional] byte[] passwordHash, [Optional] bool? active);
 
         /// <summary>

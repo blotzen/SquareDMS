@@ -101,7 +101,7 @@ namespace SquareDMS.RestEndpoint.Services
             user.PasswordHash = userCredential.HashPassword();
             user.Password = string.Empty;
 
-            return await _userDispatcher.CreateUserAsync(id, user);
+            return await _userDispatcher.CreateUserAndGroupAsync(id, user);
         }
 
         /// <summary>

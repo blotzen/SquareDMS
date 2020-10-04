@@ -1134,7 +1134,7 @@ namespace SquareDMS.DatabaseAccess
         /// </summary>
         /// <returns>Result with errorCode.</returns>
         public async Task<ManipulationResult<User>> UpdateUserAsync(int userId, int updateUserId, [Optional] string lastName,
-            [Optional] string firstName, [Optional] string userName, [Optional] string email,
+            [Optional] string firstName, [Optional] string email,
             [Optional] byte[] passwordHash, [Optional] bool? active)
         {
             _logger.Debug("User {0} updates User with UserId: {0}", userId, updateUserId);
@@ -1145,7 +1145,6 @@ namespace SquareDMS.DatabaseAccess
             parameters.Add("@updateUserId", updateUserId, DbType.Int32, direction: ParameterDirection.Input);
             parameters.Add("@lastName", lastName, DbType.StringFixedLength, direction: ParameterDirection.Input);
             parameters.Add("@firstName", firstName, DbType.StringFixedLength, direction: ParameterDirection.Input);
-            parameters.Add("@userName", userName, DbType.StringFixedLength, direction: ParameterDirection.Input);
             parameters.Add("@email", email, DbType.StringFixedLength, direction: ParameterDirection.Input);
             parameters.Add("@passwordHash", passwordHash, DbType.Binary, direction: ParameterDirection.Input);
             parameters.Add("@active", active, DbType.Boolean, direction: ParameterDirection.Input);
