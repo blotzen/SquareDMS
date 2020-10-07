@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SquareDMS.System_Test
 {
-    public abstract class TestHttpClient
+    public class TestHttpClient
     {
         /// <summary>
         /// Creates intstance of the httpClient and the web app
@@ -29,13 +29,13 @@ namespace SquareDMS.System_Test
         /// <summary>
         /// HttpClient used for testing the rest api
         /// </summary>
-        protected HttpClient TestClient { get; }
+        private HttpClient TestClient { get; }
 
         /// <summary>
         /// Does a POST Operation (ManipulationResult)
         /// </summary>
         /// <returns>Tuple of HttpStatusCode and ManipulationResult or (null, null) in case of an error</returns>
-        protected async Task<(HttpStatusCode?, ManipulationResult<T>)> PostAsync<T>(string url, T entity,
+        public async Task<(HttpStatusCode?, ManipulationResult<T>)> PostAsync<T>(string url, T entity,
             string jwt = null) where T : IDataTransferObject
         {
             var serializedEntity = JsonConvert.SerializeObject(entity);
@@ -71,7 +71,7 @@ namespace SquareDMS.System_Test
         /// <summary>
         /// Does a GET Operation (RetrievalResult)
         /// </summary>
-        protected async Task<(HttpStatusCode?, RetrievalResult<T>)> GetAsync<T>(string url, string jwt) where T : IDataTransferObject
+        public async Task<(HttpStatusCode?, RetrievalResult<T>)> GetAsync<T>(string url, string jwt) where T : IDataTransferObject
         {
             TestClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
@@ -96,12 +96,12 @@ namespace SquareDMS.System_Test
         /// <summary>
         /// Does a LOGIN Operation (Auth::Response)
         /// </summary>
-        protected async Task<(HttpStatusCode?, Response)> PostLoginAsync(string url, object entity)
+        public async Task<(HttpStatusCode?, Response)> PostLoginAsync(Request entity)
         {
             var serializedEntity = JsonConvert.SerializeObject(entity);
             var content = new StringContent(serializedEntity, Encoding.UTF8, "application/json");
 
-            var httpResponse = await TestClient.PostAsync(url, content);
+            var httpResponse = await TestClient.PostAsync("api/v1/users/login", content);
 
             var serializedResponse = await httpResponse.Content.ReadAsStringAsync();
 

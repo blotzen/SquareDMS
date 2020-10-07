@@ -3,7 +3,6 @@ using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,7 +94,7 @@ namespace SquareDMS.Core.Dispatchers
             {
                 return new ManipulationResult<User>(0, userCreationResult.ManipulatedEntity, operations.ToArray());
             }
-            
+
             return new ManipulationResult<User>(130, userCreationResult.ManipulatedEntity, operations.ToArray());
         }
 

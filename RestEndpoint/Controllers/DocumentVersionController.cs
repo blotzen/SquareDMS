@@ -50,8 +50,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// document version wasnt found. (e.g. documentversions/?documentId=12&documentVersionId=3)
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult> GetDocumentVersionMetadataAsync(int id,
-            [FromQuery] int? documentVersionId, [FromQuery] int? documentId)
+        public async Task<ActionResult> GetDocumentVersionMetadataAsync([FromQuery] int? documentVersionId, [FromQuery] int? documentId)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
 

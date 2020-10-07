@@ -97,9 +97,8 @@ namespace SquareDMS.RestEndpoint.Services
             if (userCredential is null)
                 return null;
 
-            // set the password hash and clear the stored pw
+            // set the password hash
             user.PasswordHash = userCredential.HashPassword();
-            user.Password = string.Empty;
 
             return await _userDispatcher.CreateUserAndGroupAsync(id, user);
         }

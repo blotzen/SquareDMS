@@ -6,7 +6,7 @@ using Xunit;
 namespace SquareDMS.System_Test.WorkflowTests
 {
     [Collection("Sequential")]
-    public class AdminTests : TestHttpClient, IClassFixture<ResetDbFixture>
+    public class AdminTests : IClassFixture<ResetDbFixture>
     {
         private readonly ResetDbFixture _clearDbFixture;
 
@@ -43,7 +43,9 @@ namespace SquareDMS.System_Test.WorkflowTests
         [Fact]
         public async void Login_valid()
         {
-            var loginResponse = await PostLoginAsync("api/v1/users/login", _adminValidLoginRequest);
+            var testHttpClient = new TestHttpClient();
+
+            var loginResponse = await testHttpClient.PostLoginAsync(_adminValidLoginRequest);
             var loginStatusCode = loginResponse.Item1;
             var loginBody = loginResponse.Item2;
 
@@ -60,12 +62,14 @@ namespace SquareDMS.System_Test.WorkflowTests
         [Fact]
         public async void CreateNewUser_valid()
         {
+            var testHttpClient = new TestHttpClient();
+
             // login admin
-            var loginResponseAdmin = await PostLoginAsync("api/v1/users/login", _adminValidLoginRequest);
+            var loginResponseAdmin = await testHttpClient.PostLoginAsync(_adminValidLoginRequest);
             var loginBodyAdmin = loginResponseAdmin.Item2;
 
             // create user
-            var createUserResponse = await PostAsync<User>("api/v1/users", _user, loginBodyAdmin.Token);
+            var createUserResponse = await testHttpClient.PostAsync<User>("api/v1/users", _user, loginBodyAdmin.Token);
             var createUserStatusCode = createUserResponse.Item1;
             var createUserPostResult = createUserResponse.Item2;
 
@@ -76,7 +80,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // put new user in the creators group
-            var createGroupMemberResponse = await PostAsync<GroupMember>("api/v1/groupmembers",
+            var createGroupMemberResponse = await testHttpClient.PostAsync<GroupMember>("api/v1/groupmembers",
                 new GroupMember(3, createUserPostResult.ManipulatedEntity.Id),
                 loginBodyAdmin.Token);
 
@@ -90,7 +94,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // create new document type
-            var createDocumentTypeResponse = await PostAsync<DocumentType>("api/v1/documentTypes",
+            var createDocumentTypeResponse = await testHttpClient.PostAsync<DocumentType>("api/v1/documentTypes",
                 new DocumentType("E-Book", null), loginBodyAdmin.Token);
 
             var createDocumentTypeStatusCode = createDocumentTypeResponse.Item1;
@@ -103,7 +107,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // login new user
-            var loginResponseCreator = await PostLoginAsync("api/v1/users/login", new Request()
+            var loginResponseCreator = await testHttpClient.PostLoginAsync(new Request()
             {
                 UserName = _user.UserName,
                 Password = _user.Password
@@ -112,7 +116,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // new user creates new document
-            var createDocumentResponse = await PostAsync<Document>("api/v1/documents",
+            var createDocumentResponse = await testHttpClient.PostAsync<Document>("api/v1/documents",
                 new Document(createDocumentTypePostResult.ManipulatedEntity.Id.Value, "Der Duden"), loginBodyCreator.Token);
 
             var createDocumentStatusCode = createDocumentResponse.Item1;
@@ -125,7 +129,7 @@ namespace SquareDMS.System_Test.WorkflowTests
             //-----------------------------------------------------------
 
             // retrieve created document as created user
-            var retrieveDocumentResponse = await GetAsync<Document>(@$"api/v1/documents?docId={createDocumentPostResult.ManipulatedEntity.Id.Value}",
+            var retrieveDocumentResponse = await testHttpClient.GetAsync<Document>(@$"api/v1/documents?docId={createDocumentPostResult.ManipulatedEntity.Id.Value}",
                 loginBodyCreator.Token);
 
             var retrievedDocumentStatusCode = retrieveDocumentResponse.Item1;
