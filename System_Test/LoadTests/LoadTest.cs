@@ -36,11 +36,13 @@ namespace SquareDMS.System_Test.WorkflowTests
             _clearDbFixture = clearDbFixture;
         }
 
+
         /// <summary>
-        /// Creates 5 new Users, uses the users to create documents and retrieve them in parallel.
+        /// Creates amountUsers new Users, uses the users to create documents and
+        /// documentVersions and retrieves them in parallel.
         /// </summary>
         [Theory]
-        [InlineData(25)]
+        [InlineData(100)]
         public async void CreateAndRetrieveDocumentsMultiUser(int amountUsers)
         {
             var testHttpClient = new TestHttpClient();
@@ -73,11 +75,17 @@ namespace SquareDMS.System_Test.WorkflowTests
 
             var createDocumentTypePostResult = createDocumentTypeResponse.Item2;
 
+            // create new file format
+            var createFileFormat = await testHttpClient.PostAsync<FileFormat>("api/v1/fileformats",
+                new FileFormat("PDF", "Portable Document Format"), loginBodyAdmin.Token);
+
+            var createFileFormatPostResult = createFileFormat.Item2;
+
             var tasks = new List<Task>();
             var sw = new Stopwatch();
             sw.Start();
 
-            // create http client for each user, create document and retrieve the document (Concurrent)
+            // create http client for each user, create document and document version (Concurrent)
             foreach (var user in users)
             {
                 tasks.Add(Task.Run(async () =>
@@ -93,8 +101,17 @@ namespace SquareDMS.System_Test.WorkflowTests
                     var loginBodyCreator = loginResponseCreator.Item2;
 
                     // new user creates new document
-                    return await userTestHttpClient.PostAsync<Document>("api/v1/documents",
+                    var createdDocumentPostResult = await userTestHttpClient.PostAsync<Document>("api/v1/documents",
                         new Document(createDocumentTypePostResult.ManipulatedEntity.Id.Value, "Der Duden"), loginBodyCreator.Token);
+
+                    // new user creates new documentVersion
+                    await userTestHttpClient.PostDocumentVersion("api/v1/documentversions", new DocumentVersion()
+                    {
+                        FileFormatId = createFileFormatPostResult.ManipulatedEntity.Id.Value,
+                        DocumentId = createdDocumentPostResult.Item2.ManipulatedEntity.Id.Value,
+                        //RawFile = new byte[] { 23, 33, 11, 3, 212, 2, 4, 1 }
+                        RawFile = new byte[6000]
+                    }, loginBodyCreator.Token);
                 }));
             }
 

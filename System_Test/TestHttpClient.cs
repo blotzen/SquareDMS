@@ -116,6 +116,38 @@ namespace SquareDMS.System_Test
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public async Task<(HttpStatusCode?, DocumentVersion)> PostDocumentVersion(string url, DocumentVersion docVersion, string jwt)
+        {
+            TestClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
+
+            var postContent = new MultipartFormDataContent();
+            var payload = new ByteArrayContent(docVersion.RawFile);
+
+            postContent.Add(payload, "UploadFile", "test.pdf");
+            postContent.Add(new StringContent(docVersion.DocumentId.ToString()), "DocumentId");
+            postContent.Add(new StringContent(docVersion.FileFormatId.ToString()), "FileFormatId");
+
+            var httpResponse = await TestClient.PostAsync(url, postContent);
+
+            // delete auth header after request was made
+            TestClient.DefaultRequestHeaders.Authorization = null;
+
+            var serializedResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            try
+            {
+                return (httpResponse.StatusCode, JsonConvert.DeserializeObject<DocumentVersion>(serializedResponse));
+            }
+            catch (Exception ex)
+            {
+                return (null, null);
+            }
+        }
+
+        /// <summary>
         /// Deserializes a ManipulationResult of type T
         /// </summary>
         private ManipulationResult<T> DeserializeManipulationResult<T>(string serializedManipulationResult) where T : IDataTransferObject
