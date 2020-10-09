@@ -3,6 +3,7 @@ using SquareDMS.DatabaseAccess;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -105,19 +106,26 @@ namespace SquareDMS.System_Test.WorkflowTests
                         new Document(createDocumentTypePostResult.ManipulatedEntity.Id.Value, "Der Duden"), loginBodyCreator.Token);
 
                     // new user creates new documentVersion
-                    await userTestHttpClient.PostDocumentVersion("api/v1/documentversions", new DocumentVersion()
+                    await userTestHttpClient.PostDocumentVersionAsync("api/v1/documentversions", new DocumentVersion()
                     {
                         FileFormatId = createFileFormatPostResult.ManipulatedEntity.Id.Value,
                         DocumentId = createdDocumentPostResult.Item2.ManipulatedEntity.Id.Value,
                         //RawFile = new byte[] { 23, 33, 11, 3, 212, 2, 4, 1 }
-                        RawFile = new byte[6000]
+                        RawFile = new byte[500_000]
                     }, loginBodyCreator.Token);
+
+                    var retrievedDocmentVersionMetadata = await userTestHttpClient.GetAsync<DocumentType>($"api/v1/documentversions?documentId={createdDocumentPostResult.Item2.ManipulatedEntity.Id.Value}", 
+                        loginBodyCreator.Token);
+
+                    await userTestHttpClient.GetDocumentVersionPayloadAsync($"api/v1/documentversions/" +
+                        $"{retrievedDocmentVersionMetadata.Item2.Resultset.FirstOrDefault().Id.Value}/payload", loginBodyCreator.Token);
                 }));
             }
 
             Task.WaitAll(tasks.ToArray());
 
             sw.Stop();
+            sw.Reset();
 
             // admin checks the documents
             var retrieveDocumentResponse = await testHttpClient.GetAsync<Document>(@"api/v1/documents", loginBodyAdmin.Token);
@@ -125,11 +133,13 @@ namespace SquareDMS.System_Test.WorkflowTests
 
             bool successful = true;
 
-            // amountUsers because each user creates one document
+            // amountUsers because each user creates one document and a document version
             if (retrievedDocumentGetResult.ErrorCode != 0 || retrievedDocumentGetResult.Resultset.Count() != amountUsers)
             {
                 successful = false;
             }
+
+            //GC.Collect();
 
             Assert.True(successful);
         }

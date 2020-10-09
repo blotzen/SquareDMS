@@ -116,9 +116,9 @@ namespace SquareDMS.System_Test
         }
 
         /// <summary>
-        /// 
+        /// Creates a new document version with the payload
         /// </summary>
-        public async Task<(HttpStatusCode?, DocumentVersion)> PostDocumentVersion(string url, DocumentVersion docVersion, string jwt)
+        public async Task<(HttpStatusCode?, DocumentVersion)> PostDocumentVersionAsync(string url, DocumentVersion docVersion, string jwt)
         {
             TestClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
@@ -145,6 +145,22 @@ namespace SquareDMS.System_Test
             {
                 return (null, null);
             }
+        }
+
+        /// <summary>
+        /// Gets a document version payload without serialization
+        /// </summary>
+        public async Task<object> GetDocumentVersionPayloadAsync(string url, string jwt)
+        {
+            TestClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", jwt);
+
+            var httpResponse = await TestClient.GetAsync(url);
+
+            // delete auth header after request was made
+            TestClient.DefaultRequestHeaders.Authorization = null;
+
+            return httpResponse;
         }
 
         /// <summary>
