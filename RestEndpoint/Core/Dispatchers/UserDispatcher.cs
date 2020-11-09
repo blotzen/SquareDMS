@@ -71,6 +71,10 @@ namespace SquareDMS.Core.Dispatchers
             var userCreationResult = await _squareDb.CreateUserAsync(id, user);
             var userId = userCreationResult.ManipulatedEntity.Id;
 
+            // username already exists
+            if (userId is null)
+                return userCreationResult;
+
             // create group
             var groupCreationResult = await _squareDb.CreateGroupAsync(id, new Group()
             {

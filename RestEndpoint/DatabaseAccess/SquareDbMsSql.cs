@@ -1042,7 +1042,7 @@ namespace SquareDMS.DatabaseAccess
             parameters.Add("@errorCode", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdUsers", DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@createdId", DbType.Int32, direction: ParameterDirection.Output);
-
+         
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.QueryAsync("[proc_create_user]", parameters,
@@ -1055,7 +1055,8 @@ namespace SquareDMS.DatabaseAccess
 
             _logger.Debug("Created new User in the Database; ErrorCode: {0}", errorCode);
 
-            return new ManipulationResult<User>(errorCode, new User(createdId),
+            return new ManipulationResult<User>(errorCode, 
+                new User(createdId),
                 new Operation(typeof(User), createdUsers, OperationType.Create));
         }
 
