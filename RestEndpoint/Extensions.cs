@@ -27,5 +27,16 @@ namespace SquareDMS.RestEndpoint
 
             return null;
         }
+
+        /// <summary>
+        /// Trims and Lowers the given string if its not null
+        /// </summary>
+        public static string TrimAndLower(this string input)
+        {
+            if (input is null)
+                return null;
+
+            return input.Trim().ToLower();
+        }
     }
 }

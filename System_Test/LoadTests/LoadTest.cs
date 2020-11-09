@@ -43,7 +43,7 @@ namespace SquareDMS.System_Test.WorkflowTests
         /// documentVersions and retrieves them in parallel.
         /// </summary>
         [Theory]
-        [InlineData(100)]
+        [InlineData(50)]
         public async void CreateAndRetrieveDocumentsMultiUser(int amountUsers)
         {
             var testHttpClient = new TestHttpClient();

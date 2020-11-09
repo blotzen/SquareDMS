@@ -42,7 +42,8 @@ namespace SquareDMS.RestEndpoint.Services
         /// </summary>
         public async Task<Authentication.Response> Authenticate(Authentication.Request request)
         {
-            Credential userCredential = CreateCredential(request.UserName, request.Password);
+            // creates credentials obj and prepares the username
+            Credential userCredential = CreateCredential(request.UserName.TrimAndLower(), request.Password);
 
             _logger.Debug("Created Credential for user: {0}", request.UserName);
 
@@ -89,7 +90,8 @@ namespace SquareDMS.RestEndpoint.Services
         /// </summary>
         public async Task<ManipulationResult<User>> CreateUserAsync(int id, User user)
         {
-            var userCredential = CreateCredential(user.UserName, user.Password);
+            // creates credential and prepares username
+            var userCredential = CreateCredential(user.UserName.TrimAndLower(), user.Password);
 
             _logger.Debug("Created Credential for user: {0}", user.UserName);
 
