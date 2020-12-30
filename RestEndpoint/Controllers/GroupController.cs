@@ -13,7 +13,7 @@ namespace SquareDMS.RestEndpoint.Controllers
     /// for the Ressource Group.
     /// </summary>
     [Authorize]
-    [Route("api/groups")]
+    [Route("api/v1/groups")]
     [ApiController]
     public class GroupController : ControllerBase
     {
