@@ -7,6 +7,7 @@ using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -130,7 +131,28 @@ namespace SquareDMS.RestEndpoint.Services
             // username cant be patched (changed)
             if (patchedUser.Id is null && patchedUser.UserName is null)
             {
-                // TODO: password change implementieren
+                var patchedPw = patchedUser.Password.TrimAndLower();
+
+                // password has been patched
+                if (patchedPw != null)
+                {
+                    var userToPatchResult = await _userDispatcher.RetrieveUsersAsync(id, patchUserId);
+
+                    // userToPatch Id was not found
+                    if (!userToPatchResult.Resultset.Any())
+                    {
+                        return null;
+                    }
+
+                    var newCredential = CreateCredential(userToPatchResult.Resultset.First().UserName, patchedUser.Password);
+
+                    // is null when username or password dont fulfill guidelines
+                    if (newCredential is null)
+                        return null;
+
+                    patchedUser.PasswordHash = newCredential.HashPassword();
+                }
+
                 return await _userDispatcher.UpdateUserAsync(id, patchUserId, patchedUser);
             }
 

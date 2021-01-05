@@ -153,8 +153,8 @@ namespace SquareDMS.RestEndpoint.Controllers
 
             if (patchResult is null)
             {
-                _logger.Info("Tried to update non updateable attributes");
-                return BadRequest("Tried to update non updateable attributes.");
+                _logger.Info("Tried to update non updateable attributes or userId is invalid.");
+                return BadRequest("Tried to update non updateable attributesor userId is invalid.");
             }
 
             _logger.Info("User updated with ErrorCode {0}", patchResult.ErrorCode);
