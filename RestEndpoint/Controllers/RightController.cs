@@ -100,7 +100,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// Delets a Right.
         /// </summary>
         [HttpDelete]
-        public async Task<ActionResult<ManipulationResult<Right>>> DeleteFileFormatAsync([FromQuery] int? groupId,
+        public async Task<ActionResult<ManipulationResult<Right>>> DeleteRightAsync([FromQuery] int? groupId,
             [FromQuery] int? documentId)
         {
             var userIdClaimed = HttpContext.User.Identity.GetUserIdClaim();
