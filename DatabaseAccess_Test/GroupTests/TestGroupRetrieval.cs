@@ -42,15 +42,15 @@ namespace SquareDMS.DatabaseAccess_Tests.GroupTests
         }
 
         /// <summary>
-        /// User tries to get all groups.
+        /// User gets all groups.
         /// </summary>
         [Fact]
         public async void User_GetAllGroups()
         {
-            var readResult = await _squareDbMsSql.RetrieveGroupAsync(2, admin: true);
+            var readResult = await _squareDbMsSql.RetrieveGroupAsync(2);
 
-            Assert.Empty(readResult.Resultset);
-            Assert.Equal(10, readResult.ErrorCode);
+            Assert.Equal(4, readResult.Resultset.Count());
+            Assert.Equal(0, readResult.ErrorCode);
         }
     }
 }
