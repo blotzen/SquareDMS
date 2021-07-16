@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using SquareDMS.ActionFilters;
 using SquareDMS.DataLibrary.Entities;
 using SquareDMS.DataLibrary.ProcedureResults;
 using SquareDMS.RestEndpoint.Services;
@@ -62,6 +63,7 @@ namespace SquareDMS.RestEndpoint.Controllers
         /// </summary>
         /// <returns>Manipulationresult</returns>
         [HttpPost]
+        [ServiceFilter(typeof(UserActionFilter))]
         public async Task<ActionResult<ManipulationResult<User>>> PostUserAsync([FromBody] User user)
         {
             _logger.Info("Startet creating a new User");

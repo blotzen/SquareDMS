@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using RestEndpoint.Services;
+using SquareDMS.ActionFilters;
 using SquareDMS.CacheAccess;
 using SquareDMS.Core.Dispatchers;
 using SquareDMS.DatabaseAccess;
@@ -93,6 +94,8 @@ namespace SquareDMS.RestEndpoint
 
             services.AddScoped<UserService>();
             services.AddScoped<UserDispatcher>();
+
+            services.AddScoped<UserActionFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
