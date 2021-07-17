@@ -5,36 +5,30 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using SquareDMS.DataLibrary.Entities;
+using System.Reflection;
 
 namespace SquareDMS.ActionFilters
 {
     /// <summary>
     /// This class serves as action filter for the User Entity
     /// </summary>
-    public class UserActionFilter : IActionFilter
+    public class UserActionFilter : BaseActionFilter, IActionFilter
     {
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var param = context.ActionArguments.Single();
+            var dto = context.ActionArguments.Single().Value as IDataTransferObject;
 
-            if (param.Value is null)
-            {
-                context.Result = new BadRequestObjectResult("Object is null");
-                return;
-            }
-
-            var user = param.Value as User;
-
-            if (user.UserName is null || user.UserName.Trim().Equals(string.Empty))
-            {
-                context.Result = new BadRequestObjectResult("Username is empty");
-            }
-
+            TrimAllProperties(dto);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
         public void OnActionExecuted(ActionExecutedContext context)
         {
 
