@@ -9,7 +9,6 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,20 +63,11 @@ namespace SquareDMS.RestEndpoint.Services
 
         /// <summary>
         /// Generates a JwtToken for the given userId.
-        /// Uses RSA as JWT crypto algorithm
         /// </summary>
         private string GenerateJwt(int userId)
         {
-            var privateKey = _configuration["Jwt:SecretKey"];
-
-            using RSA rsa = RSA.Create();
-            rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
-
-            var credentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
-            {
-                CryptoProviderFactory = new CryptoProviderFactory() { CacheSignatureProviders = false }
-            };
-
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.NameId, userId.ToString()),

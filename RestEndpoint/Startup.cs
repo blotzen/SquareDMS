@@ -15,7 +15,6 @@ using SquareDMS.DatabaseAccess;
 using SquareDMS.RestEndpoint.Services;
 using SquareDMS.Services;
 using System;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace SquareDMS.RestEndpoint
@@ -32,11 +31,6 @@ namespace SquareDMS.RestEndpoint
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var publicKey = Configuration["Jwt:PublicKey"];
-
-            using RSA rsa = RSA.Create();
-            rsa.ImportSubjectPublicKeyInfo(Convert.FromBase64String(publicKey), out _);
-
             services.AddControllers().AddNewtonsoftJson(s =>
             {
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -44,7 +38,7 @@ namespace SquareDMS.RestEndpoint
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false; // TODO enable
+                options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -54,13 +48,7 @@ namespace SquareDMS.RestEndpoint
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["Jwt:Issuer"],
                     ValidAudience = Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new RsaSecurityKey(rsa),
-
-                    CryptoProviderFactory = new CryptoProviderFactory()
-                    {
-                        CacheSignatureProviders = false
-                    },
-
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
                     ClockSkew = TimeSpan.Zero
                 };
             });
@@ -117,8 +105,6 @@ namespace SquareDMS.RestEndpoint
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
 
