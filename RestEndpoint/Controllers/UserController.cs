@@ -50,7 +50,7 @@ namespace SquareDMS.RestEndpoint.Controllers
             if (authenticationResponse is null)
             {
                 _logger.Info("Username or password is incorrect or user is inactive.");
-                return BadRequest("Username or password is incorrect or user is inactive.");
+                return Unauthorized("Userlogin was wrong");
             }
 
             _logger.Info("User {0} successfully logged in", authenticateRequest.UserName);

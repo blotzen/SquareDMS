@@ -80,14 +80,14 @@ namespace SquareDMS.Core.Dispatchers
             // payload of the file (rawFile)
             byte[] payload = null;
 
-            try
-            {
-                payload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id.Value);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("An error occured while trying to retrieve a playload from redis: {0}", ex.Message);
-            }
+            //try
+            //{
+            //    payload = await _squareCache.RetrieveDocumentVersionPayloadAsync(retrievedDocumentVersion.Id.Value);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error("An error occured while trying to retrieve a playload from redis: {0}", ex.Message);
+            //}
 
             // if payload is not cached
             if (payload is null)
@@ -99,7 +99,7 @@ namespace SquareDMS.Core.Dispatchers
                 try
                 {
                     // populate the cache
-                    await _squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id.Value, payload);
+                    //await _squareCache.PutDocumentPayloadAsync(retrievedDocumentVersion.Id.Value, payload);
                 }
                 catch (Exception ex)
                 {

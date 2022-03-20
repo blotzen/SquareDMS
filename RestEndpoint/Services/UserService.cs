@@ -58,7 +58,7 @@ namespace SquareDMS.RestEndpoint.Services
 
             var jwt = GenerateJwt(user.Id.Value);
 
-            return new Authentication.Response(user, jwt);
+            return new Authentication.Response(user, jwt, int.Parse(_configuration["Jwt:ExpirationMinutes"]));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace SquareDMS.RestEndpoint.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(int.Parse(_configuration["Jwt:ExpirationMinutes"])),
                 signingCredentials: credentials
             );
 
